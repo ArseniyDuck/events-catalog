@@ -1,0 +1,54 @@
+.container {
+   display: grid;
+   grid-gap: 20px;
+   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+   margin-top: 10px;
+}
+
+.card {
+   display: flex;
+   flex-direction: column;
+   padding: 20px 15px 15px 15px;
+   background: #fff;
+}
+
+.title {
+   font-size: 20px;
+}
+
+.time {
+   color: var(--light-grey)
+}
+
+
+.description {
+   flex-grow: 1;
+   margin-top: 1.5rem;
+   display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+.price {
+   margin-top: 1rem;
+}
+
+.people {
+   margin-top: 1rem;
+   font-weight: 600;
+}
+
+.categories {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-top: 1rem;
+   overflow: auto;
+}
+
+.category {
+   white-space: nowrap;
+   padding: 5px 10px;
+   border: 2px solid transparent;
+}

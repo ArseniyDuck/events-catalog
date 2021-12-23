@@ -1,0 +1,33 @@
+.subHeader {
+   margin-top: 10px;   
+
+   .container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+   }
+}
+
+.heading {
+   font-size: 50px;
+   flex-grow: 1;
+}
+
+.select,
+.filters {
+   display: flex;
+   align-items: center;
+   gap: 20px;
+   padding: 10px 10px;
+   font-size: 18px;
+   background: #fff;
+}
+
+.select {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   background-position-x: calc(100% - 10px);
+   background-position-y: 50%;
+   background-repeat: no-repeat;
+   padding-right: 60px;
+}

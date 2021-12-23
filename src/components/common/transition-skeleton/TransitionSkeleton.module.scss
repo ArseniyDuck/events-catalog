@@ -1,0 +1,16 @@
+.skeleton {
+   animation: rectangle 2s ease-in infinite;
+
+   & + & {
+      margin-top: 10px;
+   }
+}
+
+$transitionFrom: rgb(230, 238, 243);
+$transitionTo: rgb(224, 227, 235);
+
+@keyframes rectangle {
+   0% {background: $transitionFrom;}
+   30% {background: $transitionTo;}
+   100% {background: $transitionFrom;}
+}
