@@ -6,9 +6,12 @@ const eventsApi = createApi({
    endpoints: (build) => ({
       getEvents: build.query<EventType[], void>({
          query: () => `events/`
+      }),
+      getCategories: build.query<PopularCategoryType[], void>({
+         query: () => `categories/`
       })
    })
 })
 
-export const { useGetEventsQuery } = eventsApi;
+export const { useGetEventsQuery, useGetCategoriesQuery } = eventsApi;
 export default eventsApi;

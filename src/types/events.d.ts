@@ -7,7 +7,7 @@ type EventType = {
    people_required: number
    people_joined: number
    place: string
-   price: number | null
+   price: number
    categories: CategoryType[]
    creator: CreatorType
 }
@@ -23,4 +23,8 @@ type CreatorType = {
    fullname: string
    phone_number: string
    photo: string | null
+}
+
+type PopularCategoryType = CategoryType & {
+   is_popular: boolean
 }

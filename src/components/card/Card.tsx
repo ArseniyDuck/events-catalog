@@ -11,7 +11,7 @@ type PropsType = {
    people_required: number
    people_joined: number
    place: string
-   price: number | null
+   price: number
    categories: CategoryType[]
 }
 
@@ -21,12 +21,12 @@ const EventCard: React.FC<PropsType> = (props) => {
          <h5 className={s.title}>{props.title}</h5>
          <span className={s.time}>December 22, Wednesday</span>
          <p className={s.description}>{props.description}</p>
-         {props.price && (
+         {props.price > 0 && (
             <p className={s.price}>Price: ${props.price}</p>
          )}
          <p className={s.people}>{props.people_joined}/{props.people_required} people – {props.people_required - props.people_joined} places left</p>
          <div className={s.categories}>
-            {!props.price && (
+            {props.price === 0 && (
                <Category name='Free' color='green' />
             )}
             {props.categories.map(category => (

@@ -27,7 +27,7 @@ const SubHeader: React.FC<PropsType> = (props) => {
 }
 
 
-const SortBy = { PRICE: 'price', DATE: 'date', }
+const SortBy = { PRICE: 'price', DATE: 'time', DEFAULT: 'id' }
 
 type FormValues = {
    sortBy: typeof SortBy[keyof typeof SortBy]
@@ -47,6 +47,7 @@ const Sorting = () => {
          {() => (
          <Form>
             <Field as='select' name='sortBy' className={s.select} style={{backgroundImage: `url(${arrow})`}}>
+               <option value={SortBy.DEFAULT}>Newest</option>
                <option value={SortBy.PRICE}>By price</option>
                <option value={SortBy.DATE}>By date</option>
             </Field>

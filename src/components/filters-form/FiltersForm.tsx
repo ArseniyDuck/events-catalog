@@ -1,11 +1,12 @@
-import React from 'react';
-import { Form, Formik, FormikHelpers } from 'formik';
+import React, { useState } from 'react';
+import { Field, Form, Formik, FormikHelpers } from 'formik';
 import s from './FiltersForm.module.scss';
-import { BodyBlur } from 'components/common';
-import { conditionClassName } from 'tools/functions';
+import { BodyBlur, TransitionSkeleton } from 'components/common';
+import { conditionClassName, getArrayOfComponents } from 'tools/functions';
 import { Arrow } from 'icons';
 import Cross from 'icons/cross/Cross';
 import { usePopUp } from 'hooks';
+import { CategoriesLabel, CategoriesSelection } from 'components/common/select-categories/SelectCategories';
 
 
 
@@ -13,24 +14,42 @@ type PropsType = {
    isOpened: boolean
    close: () => void
    filtersRef: React.RefObject<HTMLDivElement>
+   categories?: PopularCategoryType[]
+   isLoading: boolean
 }
 
-type FormValues = {}
+type FormValues = {
+   peopleRequired: number | ''
+   availablePlaces: number | ''
+   onlyFree: boolean
+   maxPrice: number | ''
+
+}
 
 const FiltersForm: React.FC<PropsType> = (props) => {
    const [areCategoriesOpened, setAreCategoriesOpened, categoriesRef] = usePopUp<HTMLDivElement>();
+   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
    
-   const initialValues: FormValues = {}
+   const initialValues: FormValues = {
+      peopleRequired: '',
+      availablePlaces: '',
+      onlyFree: false,
+      maxPrice: '',
+   }
 
    const handleSubmit = (formData: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
+      console.log(formData, selectedCategories);
+      
       setSubmitting(false);
-      resetForm({});
       props.close();
    }
 
    return (
       <BodyBlur blurFlag={props.isOpened}>
-         <div ref={props.filtersRef} className={conditionClassName(s.body, props.isOpened, s.opened)}>
+         <div
+            ref={props.filtersRef}
+            className={conditionClassName(`${s.body} ${s.filterBody}`, props.isOpened, s.opened)}
+         >
             <h3 className={s.heading}>Search event filters</h3>
             <button onClick={props.close} className={s.cross}>
                <Cross size={17} />
@@ -38,7 +57,50 @@ const FiltersForm: React.FC<PropsType> = (props) => {
             <Formik initialValues={initialValues} onSubmit={handleSubmit}>
                {() => (
                <Form className={s.form}>
-                  <CategoriesLabel onClick={() => setAreCategoriesOpened(true)} />
+                  <CategoriesLabel
+                     onClick={() => setAreCategoriesOpened(true)}
+                     selectedCategories={selectedCategories}
+                  />
+                  <label className={s.filterField}>
+                     People needed for event
+                     <Field
+                        autoComplete='off'
+                        type='number'
+                        name='peopleRequired'
+                        id='peopleRequired'
+                        className={s.input}
+                     />
+                  </label>
+                  <label className={s.filterField}>
+                     Available places left
+                     <Field
+                        autoComplete='off'
+                        type='number'
+                        name='availablePlaces'
+                        id='availablePlaces'
+                        className={s.input}
+                     />
+                  </label>
+                  <label className={`${s.filterField} ${s.filterCheckbox}`}>
+                     <Field
+                        autoComplete='off'
+                        type='checkbox'
+                        name='onlyFree'
+                        id='onlyFree'
+                        className={s.input}
+                     />
+                     Show only free
+                  </label>
+                  <label className={s.filterField}>
+                     Maximum price
+                     <Field
+                        autoComplete='off'
+                        type='number'
+                        name='maxPrice'
+                        id='maxPrice'
+                        className={s.input}
+                     />
+                  </label>
                   <button className={s.apply} type='submit'>Apply filters</button>
                </Form>
                )}
@@ -47,40 +109,13 @@ const FiltersForm: React.FC<PropsType> = (props) => {
                isOpened={areCategoriesOpened}
                close={() => setAreCategoriesOpened(false)}
                categoriesRef={categoriesRef}
+               selectedCategories={selectedCategories}
+               setSelectedCategories={setSelectedCategories}
+               categories={props.categories}
+               isLoading={props.isLoading}
             />
          </div>
       </BodyBlur>
-   );
-}
-
-
-const CategoriesLabel: React.FC<{onClick: () => void}> = (props) => {
-   return (
-      <div onClick={props.onClick} className={s.formLabel}>
-         <p className={s.labelName}>Categories</p>
-         <p className={s.selectedItems}>Sport, Active rest, Category, Category</p>
-         <Arrow direction='right' size={15} color='var(--grey)' />
-      </div>
-   );
-}
-
-
-type CategoriesSelectionProps = {
-   isOpened: boolean
-   close: () => void
-   categoriesRef: React.RefObject<HTMLDivElement>
-}
-const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) => {
-   return (
-      <div ref={props.categoriesRef} className={conditionClassName(s.body, props.isOpened, s.opened)}>
-         <div className={s.selectionHeader}>
-            <button onClick={props.close} className={s.backToFilters}>
-               <Arrow size={20} direction='left' />
-               <h3 className={s.heading}>Select categories</h3>
-            </button>
-            <button className={s.resetCategories}>reset</button>
-         </div>
-      </div>
    );
 }
 

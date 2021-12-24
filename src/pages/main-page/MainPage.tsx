@@ -1,7 +1,7 @@
 import React from 'react';
 import s from './MainPage.module.scss';
 import Header from 'components/header/Header';
-import { useGetEventsQuery } from 'redux/events';
+import { useGetCategoriesQuery, useGetEventsQuery } from 'redux/events';
 import SubHeader from 'components/sub-header/SubHeader';
 import { getArrayOfComponents } from 'tools/functions';
 import EventCard, { CardsContainer, EventCardSkeleton } from 'components/card/Card';
@@ -18,23 +18,26 @@ const MainPage: React.FC<PropsType> = (props) => {
 };
 
 const Main: React.FC = () => {
-   const { data, isLoading } = useGetEventsQuery();
+   const { data: events, isLoading: isLoadingEvents } = useGetEventsQuery();
+   const { data: categories, isLoading: isLoadingCategories } = useGetCategoriesQuery();
    const [isFilterOpened, setisFilterOpened, filterRef] = usePopUp<HTMLDivElement>();
    
    return <>
       <SubHeader
-         eventsCount={data ? data.length : 0}
+         eventsCount={events ? events.length : 0}
          openFilters={() => setisFilterOpened(true)}
       />
       <FiltersForm
          isOpened={isFilterOpened}
          close={() => setisFilterOpened(false)}
          filtersRef={filterRef}
+         categories={categories}
+         isLoading={isLoadingCategories}
       />
       <CardsContainer>
-         {isLoading
+         {isLoadingEvents
             ? getArrayOfComponents(EventCardSkeleton, 20)
-            : data?.map(event => (
+            : events?.map(event => (
                <EventCard
                   key={event.id}
                   title={event.name}
