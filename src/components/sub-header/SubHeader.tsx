@@ -1,10 +1,9 @@
-import { Container } from 'components/common';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { MenuBurger } from 'icons';
 import React from 'react';
-import s from './SubHeader.module.scss';
-import arrow from 'images/arrow.svg';
 import { SortBy } from 'tools/variables'
+import s from './SubHeader.module.scss';
+import { Container } from 'components/common';
+import { MenuBurger } from 'icons';
+import arrow from 'images/arrow.svg';
 
 
 type PropsType = {

@@ -12,13 +12,13 @@
    top: 0;
    right: -100%;
 
-   .apply {
+   .buttons {
       bottom: 0;
       right: -100%;
    }
 
    &.opened,
-   &.opened .apply {
+   &.opened .buttons {
       right: 0;
       transition: var(--side-move);
    }
@@ -73,18 +73,13 @@
    }
 }
 
-.apply {
+.buttons {
    position: fixed;
    right: 0;
    bottom: 0;
    display: flex;
-   align-items: center;
-   justify-content: center;
    width: 450px;
    height: 50px;
-   font-size: 22px;
-   color: #fff;
-   background: var(--main-color);
    transition: var(--hover);
 
    @media (any-hover: hover) {
@@ -93,4 +88,39 @@
          transition: var(--hover);
       }
    }
+}
+
+.reset,
+.apply {
+   flex-grow: 1;
+   font-size: 22px;
+   transition: var(--hover);
+
+   @media (any-hover: hover) {
+      &:hover {
+         transition: var(--hover);
+      }
+   }
+
+   &.apply {
+      background: var(--main-color);
+      color: #fff;
+
+      @media (any-hover: hover) {
+         &:hover {
+            background: var(--bright-main-color);
+         }
+      }
+   }
+   &.reset {
+      background: #e1e1e1;
+
+      @media (any-hover: hover) {
+         &:hover {
+            background: #d3d3d3;
+         }
+      }
+   }
+
+   
 }

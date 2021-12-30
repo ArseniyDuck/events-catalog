@@ -6,16 +6,17 @@ import s from './SelectCategories.module.scss';
 
 
 type PropsType = {
-   onClick: () => void,
+   onClick: () => void
+   categories: PopularCategory[]
    selectedCategories: number[]
 }
 
-export const CategoriesLabel: React.FC<PropsType> = ({selectedCategories, onClick}) => {
+export const CategoriesLabel: React.FC<PropsType> = ({selectedCategories, categories, onClick}) => {
    return (
       <div onClick={onClick} className={s.formLabel}>
          <p className={s.labelName}>Categories</p>
          <p className={s.selectedItems}>
-            {selectedCategories.length ? selectedCategories.map(category => category).join(', ') : 'All'}
+            {selectedCategories.length ? categories.filter(category => selectedCategories.includes(category.id)).map(category => category.name).join(', ') : 'All'}
          </p>
          <Arrow direction='right' size={15} color='var(--grey)' />
       </div>
@@ -54,6 +55,8 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
             </button>
          </div>
 
+         <p className={s.incentive}>Mark categories that you are interested in</p>
+
          <h6 className={s.subHeading}>Popular</h6>
          {props.isLoading
             ? getArrayOfComponents(() => <TransitionSkeleton width={'60%'} height={15} />, 6)
@@ -63,7 +66,7 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
                   id={category.id}
                   name={category.name}
                   onChange={handleCheckboxChange}
-                  checked={props.selectedCategories.findIndex(categoryId => categoryId === category.id) !== -1}
+                  checked={props.selectedCategories.findIndex(categoryId => categoryId === category.id) > -1}
                />
             ))
          }
@@ -77,7 +80,7 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
                   id={category.id}
                   name={category.name}
                   onChange={handleCheckboxChange}
-                  checked={props.selectedCategories.findIndex(categoryId => categoryId === category.id) !== -1}
+                  checked={props.selectedCategories.findIndex(categoryId => categoryId === category.id) > -1}
                />
             ))
          }

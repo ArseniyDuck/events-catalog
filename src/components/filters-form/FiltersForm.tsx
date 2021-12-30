@@ -14,7 +14,7 @@ type PropsType = {
    isOpened: boolean
    close: () => void
    filtersRef: React.RefObject<HTMLDivElement>
-   categories?: PopularCategory[]
+   categories: PopularCategory[]
    isLoading: boolean
    setFilters: React.Dispatch<React.SetStateAction<CalalogEventFilters>>
 }
@@ -27,7 +27,7 @@ type FormValues = {
 }
 
 const FiltersForm: React.FC<PropsType> = (props) => {
-   const { getParam, updateParams } = useQueryParams<FilterQueryParams>();
+   const { getParam, updateParams, resetParams } = useQueryParams<FilterQueryParams>();
    const [areCategoriesOpened, setAreCategoriesOpened, categoriesRef] = usePopUp<HTMLDivElement>();
 
    const queryParams = {
@@ -61,7 +61,19 @@ const FiltersForm: React.FC<PropsType> = (props) => {
          ...formFilters,
          categories: selectedCategories,
       }))
-   }, [formFilters, setSelectedCategories]);
+   }, [formFilters]);
+
+   const reset = () => {
+      setFormFilters({
+         availablePlaces: '',
+         maxPrice: '',
+         onlyFree: false,
+         peopleRequired: ''
+      })
+      setSelectedCategories([])
+      resetParams()
+      props.close()
+   }
    
    return (
       <BodyBlur blurFlag={props.isOpened}>
@@ -79,6 +91,7 @@ const FiltersForm: React.FC<PropsType> = (props) => {
                   <CategoriesLabel
                      onClick={() => setAreCategoriesOpened(true)}
                      selectedCategories={selectedCategories}
+                     categories={props.categories}
                   />
                   <label className={s.filterField}>
                      People needed for event
@@ -120,7 +133,10 @@ const FiltersForm: React.FC<PropsType> = (props) => {
                         className={s.input}
                      />
                   </label>
-                  <button className={s.apply} type='submit'>Apply filters</button>
+                  <div className={s.buttons}>
+                     <button className={s.reset} onClick={reset} type='reset'>Reset</button>
+                     <button className={s.apply} type='submit'>Apply</button>
+                  </div>
                </Form>
                )}
             </Formik>

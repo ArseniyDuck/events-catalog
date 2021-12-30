@@ -44,7 +44,7 @@ const Header: React.FC<PropsType> = (props) => {
                      type='text'
                      name='term'
                      className={s.searchInput}
-                     placeholder='Search'
+                     placeholder='Search by title'
                   />
                </Form>
                )}

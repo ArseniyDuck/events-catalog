@@ -8,26 +8,38 @@ import EventCard, { CardsContainer, EventCardSkeleton } from 'components/card/Ca
 import { usePopUp } from 'hooks/usePopUp';
 import FiltersForm from 'components/filters-form/FiltersForm';
 import { DefaultFilters, SortBy } from 'tools/variables';
+import { useNavigate } from 'react-router-dom';
+import { routeLinks } from 'app-routing';
 
 type PropsType = {};
 
 const MainPage: React.FC = () => {
+   const navigate = useNavigate()
+
    const [sortMode, setSortMode] = useState<string>(SortBy.NEWEST);
    const [filters, setFilters] = useState<CalalogEventFilters>(DefaultFilters);
 
-   const { data: events, isLoading: isLoadingEvents } = useGetEventsQuery({sort: sortMode, filter: filters});
-   const { data: categories, isLoading: isLoadingCategories } = useGetCategoriesQuery();
+   const {data: catalogEvents=[], isLoading: isLoadingEvents} = useGetEventsQuery({sort: sortMode, filter: filters});
+   const {data: categories=[], isLoading: isLoadingCategories} = useGetCategoriesQuery();
 
    const [isFilterOpened, setisFilterOpened, filterRef] = usePopUp<HTMLDivElement>();
 
    const setSearch = (search: string) => {
       setFilters(prev => ({ ...prev, search }))
    }
+
+   // const isFiltered = JSON.stringify(filters) !== JSON.stringify(DefaultFilters)
+   
+   // const resetFilters = () => {
+   //    setFilters(DefaultFilters);
+   //    navigate(routeLinks.MAIN);
+   // }
+
    
    return <>
       <Header setSearch={setSearch} />
       <SubHeader
-         eventsCount={events ? events.length : 0}
+         eventsCount={catalogEvents ? catalogEvents.length : 0}
          openFilters={() => setisFilterOpened(true)}
          sortMode={sortMode}
          setSortMode={setSortMode}
@@ -43,7 +55,7 @@ const MainPage: React.FC = () => {
       <CardsContainer>
          {isLoadingEvents
             ? getArrayOfComponents(EventCardSkeleton, 20)
-            : events?.map(event => (
+            : catalogEvents?.map(event => (
                <EventCard
                   key={event.id}
                   {...event}
