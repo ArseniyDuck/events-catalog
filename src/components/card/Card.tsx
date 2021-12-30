@@ -8,7 +8,7 @@ import { monthNames } from 'tools/variables';
 import { addLeadingZero } from 'tools/functions';
 
 
-type PropsType = EventType
+type PropsType = CatalogEvent
 
 const EventCard: React.FC<PropsType> = (props) => {
    const [isOpened, setIsOpened, popUpRef] = usePopUp<HTMLDivElement>();

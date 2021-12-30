@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { useQueryParams } from 'hooks';
 import s from './Header.module.scss';
 import { Container } from 'components/common';
 import { Search } from 'icons';
-import { useQueryParams } from 'hooks';
 
 
 type PropsType = {

@@ -13,7 +13,7 @@ type PropsType = {};
 
 const MainPage: React.FC = () => {
    const [sortMode, setSortMode] = useState<string>(SortBy.NEWEST);
-   const [filters, setFilters] = useState<FilterType>(DefaultFilters);
+   const [filters, setFilters] = useState<CalalogEventFilters>(DefaultFilters);
 
    const { data: events, isLoading: isLoadingEvents } = useGetEventsQuery({sort: sortMode, filter: filters});
    const { data: categories, isLoading: isLoadingCategories } = useGetCategoriesQuery();

@@ -14,8 +14,8 @@ type ParamType<P extends Params> =
 export function useQueryParams() {
    const [searchParams, setSearchParams] = useSearchParams();
 
-   function getParam<P extends Params = Params.STRING>(param: keyof QueryParamsType, paramType?: P): ParamType<P>;
-   function getParam(param: keyof QueryParamsType, paramType?: Params) {
+   function getParam<P extends Params = Params.STRING>(param: keyof FilterQueryParams, paramType?: P): ParamType<P>;
+   function getParam(param: keyof FilterQueryParams, paramType?: Params) {
       switch (paramType) {
          case Params.ARRAY: return searchParams.getAll(param) || []
          case Params.BOOLEAN:
@@ -25,7 +25,7 @@ export function useQueryParams() {
       }
    }
 
-   const updateParams = (params: QueryParamsType) => {
+   const updateParams = (params: FilterQueryParams) => {
       for (const [param, paramValue] of Object.entries(params)) {
          if (paramValue instanceof Array) {
             searchParams.delete(param)

@@ -1,4 +1,4 @@
-type EventType = {
+type CatalogEvent = {
    id: number
    name: string
    description: string
@@ -8,41 +8,41 @@ type EventType = {
    people_joined: number
    place: string
    price: number
-   categories: CategoryType[]
-   creator: CreatorType
+   categories: Category[]
+   creator: CalalogEventAuthor
 }
 
-type CategoryType = {
+type Category = {
    id: number
    name: string
    color: string
 }
 
-type CreatorType = {
+type CalalogEventAuthor = {
    id: number
    fullname: string
    phone_number: string
    photo: string | null
 }
 
-type PopularCategoryType = CategoryType & {
+type PopularCategory = Category & {
    is_popular: boolean
 }
 
-type FilterType = {
+type CalalogEventFilters = {
    search: string
-   price: string
+   maxPrice: string
    peopleRequired: string
    availablePlaces: string
    onlyFree: boolean
    categories: number[]
 }
 
-type QueryParamsType = {
-   [P in keyof FilterType]?: boolean | string | number[]
+type FilterQueryParams = {
+   [P in keyof CalalogEventFilters]?: boolean | string | number[]
 }
 
-type SmallCategoryType = {
+type SmallCategory = {
    id: number
    name: string
 }

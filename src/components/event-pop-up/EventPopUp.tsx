@@ -9,7 +9,7 @@ type PropsType = {
    isOpened: boolean
    close: () => void
    popUpRef: React.RefObject<HTMLDivElement>
-   event: EventType
+   event: CatalogEvent
 };
 
 const EventPopUp: React.FC<PropsType> = (props) => {

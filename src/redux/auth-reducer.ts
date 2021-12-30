@@ -5,7 +5,7 @@ import AuthService from 'services/AuthService';
 
 
 type initialStateType = {
-   user: UserType
+   user: User
    signUpErrors: string[]
 };
 
@@ -20,7 +20,7 @@ const initialState: initialStateType = {
 
 export const signIn = createAsyncThunk(
    'auth/signIn',
-   async (user: SignInUserType, thunkAPI) => {
+   async (user: RegistrationUser, thunkAPI) => {
       try {
          const { data: { access, refresh } } = await AuthService.signIn(user);
          localStorage.setItem('accessToken', access)
@@ -36,7 +36,7 @@ export const signIn = createAsyncThunk(
 
 export const signUp = createAsyncThunk(
    'auth/signUp',
-   async (user: SignUpUserType, thunkAPI) => {
+   async (user: SignUpUser, thunkAPI) => {
       try {
          const response = await AuthService.signUp(user);
          if (response.status === 201) {

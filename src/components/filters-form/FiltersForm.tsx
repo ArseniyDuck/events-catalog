@@ -14,9 +14,9 @@ type PropsType = {
    isOpened: boolean
    close: () => void
    filtersRef: React.RefObject<HTMLDivElement>
-   categories?: PopularCategoryType[]
+   categories?: PopularCategory[]
    isLoading: boolean
-   setFilters: React.Dispatch<React.SetStateAction<FilterType>>
+   setFilters: React.Dispatch<React.SetStateAction<CalalogEventFilters>>
 }
 
 type FormValues = {
@@ -27,54 +27,39 @@ type FormValues = {
 }
 
 const FiltersForm: React.FC<PropsType> = (props) => {
-   const { getParam, updateParams } = useQueryParams()
-   
+   const { getParam, updateParams } = useQueryParams();
    const [areCategoriesOpened, setAreCategoriesOpened, categoriesRef] = usePopUp<HTMLDivElement>();
-   
-   const [formFilters, setFormFilters] = useState<Omit<FilterType, 'categories' | 'search'>>({
+
+   const queryParams = {
       peopleRequired: getParam('peopleRequired'),
       availablePlaces: getParam('availablePlaces'),
       onlyFree:  getParam('onlyFree', Params.BOOLEAN),
-      price: getParam('price'),
-   });
+      maxPrice: getParam('maxPrice'),
+   }
 
+   const initialValues: FormValues = queryParams
+   
+   const [formFilters, setFormFilters] = useState<Omit<CalalogEventFilters, 'categories' | 'search'>>(queryParams);
    const [selectedCategories, setSelectedCategories] = useState<number[]>(
       getParam('categories', Params.ARRAY).map(id => Number(id))
    );
    
-   const initialValues: FormValues = {
-      peopleRequired: getParam('peopleRequired'),
-      availablePlaces: getParam('availablePlaces'),
-      onlyFree:  getParam('onlyFree', Params.BOOLEAN),
-      maxPrice: getParam('price'),
-   }
-
    const handleSubmit = (formData: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
       setSubmitting(false);
       props.close();
-      setFormFilters({
-         peopleRequired: formData.peopleRequired,
-         availablePlaces: formData.availablePlaces,
-         onlyFree:  formData.onlyFree,
-         price: formData.maxPrice,
-      });
+      setFormFilters({ ...formData });
       updateParams({
-         peopleRequired: formData.peopleRequired,
-         availablePlaces: formData.availablePlaces,
+         ...formData,
          onlyFree:  formData.onlyFree ? formData.onlyFree : '',
-         price: formData.maxPrice,
-         categories: selectedCategories
+         categories: selectedCategories,
       })
    };
-
+   
    useEffect(() => {
       props.setFilters(prev => ({
          ...prev,
-         availablePlaces: formFilters.availablePlaces,
+         ...formFilters,
          categories: selectedCategories,
-         onlyFree: formFilters.onlyFree,
-         peopleRequired: formFilters.peopleRequired,
-         price: formFilters.price,
       }))
    }, [formFilters, setSelectedCategories]);
    

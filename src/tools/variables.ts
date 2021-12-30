@@ -1,8 +1,8 @@
-export const DefaultFilters: FilterType = {
+export const DefaultFilters: CalalogEventFilters = {
    search: '',
    availablePlaces: '',
    peopleRequired: '',
-   price: '',
+   maxPrice: '',
    onlyFree: false,
    categories: []
 }

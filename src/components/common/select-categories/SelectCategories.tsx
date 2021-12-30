@@ -29,12 +29,12 @@ type CategoriesSelectionProps = {
    categoriesRef: React.RefObject<HTMLDivElement>
    selectedCategories: number[]
    setSelectedCategories: React.Dispatch<React.SetStateAction<number[]>>
-   categories?: PopularCategoryType[]
+   categories?: PopularCategory[]
    isLoading: boolean
 }
 
 export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) => {  
-   const handleCheckboxChange = (category: SmallCategoryType) => (event: React.ChangeEvent<HTMLInputElement>) => {
+   const handleCheckboxChange = (category: SmallCategory) => (event: React.ChangeEvent<HTMLInputElement>) => {
       props.setSelectedCategories(prev =>
          event.target.checked
          ? [...prev, category.id]
@@ -89,7 +89,7 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
 type CategoryCheckBoxProps = {
    id: number
    name: string
-   onChange: (category: SmallCategoryType) => (event: React.ChangeEvent<HTMLInputElement>) => void
+   onChange: (category: SmallCategory) => (event: React.ChangeEvent<HTMLInputElement>) => void
    checked: boolean 
 }
 

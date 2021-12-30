@@ -5,18 +5,18 @@ const eventsApi = createApi({
    reducerPath: 'eventsApi',
    baseQuery: fetchBaseQuery({baseUrl: 'http://localhost:8000/'}),
    endpoints: (build) => ({
-      getEvents: build.query<EventType[], {sort?: string, filter: FilterType}>({
+      getEvents: build.query<CatalogEvent[], {sort?: string, filter: CalalogEventFilters}>({
          query: ({sort='', filter}) => `events/?${generateQueryString({
             ordering: sort,
             search: filter.search,
-            price: filter.price,
+            price: filter.maxPrice,
             people_required: filter.peopleRequired,
             available_places: filter.availablePlaces,
             only_free: filter.onlyFree,
             categories: filter.categories,
          })}`
       }),
-      getCategories: build.query<PopularCategoryType[], void>({
+      getCategories: build.query<PopularCategory[], void>({
          query: () => `categories/`
       })
    })

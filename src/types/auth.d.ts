@@ -1,20 +1,20 @@
-type UserType = {
+type User = {
    id: number | null
    username: string
 }
 
-type SignUpUserType = {
+type SignUpUser = {
    username: string,
    password1: string,
    password2: string
 }
 
-type SignInUserType = {
+type RegistrationUser = {
    username: string
    password: string
 }
 
-type TokensType = {
+type JWTTokens = {
    access: string,
    refresh: string
 }
