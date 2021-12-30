@@ -1,8 +1,11 @@
+@import '../../styles/mixins.scss'; 
+
 .container {
    display: grid;
    grid-gap: 20px;
    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-   margin-top: 10px;
+   margin-top: 15px !important;
+   padding-bottom: 20px !important;
 }
 
 .card {
@@ -20,9 +23,11 @@
    color: var(--light-grey)
 }
 
+.descriptionWrapper {
+   flex-grow: 1;
+}
 
 .description {
-   flex-grow: 1;
    margin-top: 1.5rem;
    display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -45,10 +50,5 @@
    gap: 10px;
    margin-top: 1rem;
    overflow: auto;
-}
-
-.category {
-   white-space: nowrap;
-   padding: 5px 10px;
-   border: 2px solid transparent;
+   @include hide-scrollbar();
 }

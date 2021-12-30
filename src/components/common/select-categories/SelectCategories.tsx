@@ -7,15 +7,15 @@ import s from './SelectCategories.module.scss';
 
 type PropsType = {
    onClick: () => void,
-   selectedCategories: string[]
+   selectedCategories: number[]
 }
 
-export const CategoriesLabel: React.FC<PropsType> = ({selectedCategories: categories, onClick}) => {
+export const CategoriesLabel: React.FC<PropsType> = ({selectedCategories, onClick}) => {
    return (
       <div onClick={onClick} className={s.formLabel}>
          <p className={s.labelName}>Categories</p>
          <p className={s.selectedItems}>
-            {categories.length ? categories.join(', ') : 'All'}
+            {selectedCategories.length ? selectedCategories.map(category => category).join(', ') : 'All'}
          </p>
          <Arrow direction='right' size={15} color='var(--grey)' />
       </div>
@@ -27,19 +27,19 @@ type CategoriesSelectionProps = {
    isOpened: boolean
    close: () => void
    categoriesRef: React.RefObject<HTMLDivElement>
-   selectedCategories: string[]
-   setSelectedCategories: (categories: string[] | ((categories: string[]) => string[])) => void
+   selectedCategories: number[]
+   setSelectedCategories: React.Dispatch<React.SetStateAction<number[]>>
    categories?: PopularCategoryType[]
    isLoading: boolean
 }
 
 export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) => {  
-   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      props.setSelectedCategories(prev => (
+   const handleCheckboxChange = (category: SmallCategoryType) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      props.setSelectedCategories(prev =>
          event.target.checked
-         ? [...prev, event.target.value]
-         : prev.filter(category => category !== event.target.value)
-      ))
+         ? [...prev, category.id]
+         : prev.filter(categoryId => categoryId !== category.id)
+      )
    }
 
    return (
@@ -60,9 +60,10 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
             : props.categories?.filter(category => category.is_popular).map(category => (
                <CategoryCheckBox
                   key={category.id}
+                  id={category.id}
                   name={category.name}
                   onChange={handleCheckboxChange}
-                  checked={props.selectedCategories.includes(category.name)}
+                  checked={props.selectedCategories.findIndex(categoryId => categoryId === category.id) !== -1}
                />
             ))
          }
@@ -73,9 +74,10 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
             : props.categories?.filter(category => !category.is_popular).map(category => (
                <CategoryCheckBox
                   key={category.id}
+                  id={category.id}
                   name={category.name}
                   onChange={handleCheckboxChange}
-                  checked={props.selectedCategories.includes(category.name)}
+                  checked={props.selectedCategories.findIndex(categoryId => categoryId === category.id) !== -1}
                />
             ))
          }
@@ -85,18 +87,24 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
 
 
 type CategoryCheckBoxProps = {
-   name: string,
-   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+   id: number
+   name: string
+   onChange: (category: SmallCategoryType) => (event: React.ChangeEvent<HTMLInputElement>) => void
    checked: boolean 
 }
 
 const CategoryCheckBox: React.FC<CategoryCheckBoxProps> = (props) => {
+   const category = {
+      id: props.id,
+      name: props.name,
+   }
+
    return (
       <label className={s.selectionLabel}>
          <input
             type='checkbox'
-            value={props.name}
-            onChange={props.onChange}
+            value={props.id}
+            onChange={props.onChange(category)}
             className={s.selectionCheckBox}
             checked={props.checked}
             />

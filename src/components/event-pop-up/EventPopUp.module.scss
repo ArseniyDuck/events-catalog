@@ -1,0 +1,82 @@
+@import '../../styles/mixins.scss';
+
+.wrapper {
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 80%;
+   max-width: 550px;
+   background: #fff;
+   padding: 30px 25px 25px 25px;
+}
+
+.heading {
+   font-size: 40px;
+   font-weight: 700;
+}
+
+.time {
+   color: var(--grey);
+   font-size: 20px;
+}
+
+.description {
+   margin-top: 1rem; 
+   font-size: 20px;
+}
+
+.table,
+.table th,
+.table td {
+   border: 1px solid var(--grey)
+}
+
+.table {
+   margin-top: 1.5rem;
+   width: 100%;
+   border-collapse: collapse;
+
+   td, th {
+      padding: 5px 0;
+      font-size: 18px;
+   }
+   
+   td {
+      text-align: center;
+   }
+}
+
+.bottom {
+   margin-top: 1.5rem;
+   display: flex;
+   align-items: flex-end;
+}
+
+.categoriesWrapper {
+   flex-grow: 1;
+}
+
+.categories {
+   margin-bottom: 0.2rem;
+   color: var(--grey);
+}
+
+.categoriesContainer {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+.creator {
+   text-align: center;
+   margin-bottom: 0.2rem;
+}
+
+.phone {
+   display: inline-block;
+   background: var(--main-color);
+   color: #fff;
+   font-size: 20px;
+   padding: 10px 20px;
+}

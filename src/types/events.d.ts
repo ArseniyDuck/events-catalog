@@ -28,3 +28,21 @@ type CreatorType = {
 type PopularCategoryType = CategoryType & {
    is_popular: boolean
 }
+
+type FilterType = {
+   search: string
+   price: string
+   peopleRequired: string
+   availablePlaces: string
+   onlyFree: boolean
+   categories: number[]
+}
+
+type QueryParamsType = {
+   [P in keyof FilterType]?: boolean | string | number[]
+}
+
+type SmallCategoryType = {
+   id: number
+   name: string
+}

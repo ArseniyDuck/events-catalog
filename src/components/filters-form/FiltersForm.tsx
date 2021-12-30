@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
 import s from './FiltersForm.module.scss';
-import { BodyBlur, TransitionSkeleton } from 'components/common';
-import { conditionClassName, getArrayOfComponents } from 'tools/functions';
-import { Arrow } from 'icons';
+import { BodyBlur } from 'components/common';
+import { conditionClassName } from 'tools/functions';
 import Cross from 'icons/cross/Cross';
-import { usePopUp } from 'hooks';
+import { usePopUp, useQueryParams } from 'hooks';
 import { CategoriesLabel, CategoriesSelection } from 'components/common/select-categories/SelectCategories';
+import { Params } from 'hooks/useQueryParams';
 
 
 
@@ -16,34 +16,68 @@ type PropsType = {
    filtersRef: React.RefObject<HTMLDivElement>
    categories?: PopularCategoryType[]
    isLoading: boolean
+   setFilters: React.Dispatch<React.SetStateAction<FilterType>>
 }
 
 type FormValues = {
-   peopleRequired: number | ''
-   availablePlaces: number | ''
+   peopleRequired: string
+   availablePlaces: string
    onlyFree: boolean
-   maxPrice: number | ''
-
+   maxPrice: string
 }
 
 const FiltersForm: React.FC<PropsType> = (props) => {
+   const { getParam, updateParams } = useQueryParams()
+   
    const [areCategoriesOpened, setAreCategoriesOpened, categoriesRef] = usePopUp<HTMLDivElement>();
-   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+   
+   const [formFilters, setFormFilters] = useState<Omit<FilterType, 'categories' | 'search'>>({
+      peopleRequired: getParam('peopleRequired'),
+      availablePlaces: getParam('availablePlaces'),
+      onlyFree:  getParam('onlyFree', Params.BOOLEAN),
+      price: getParam('price'),
+   });
+
+   const [selectedCategories, setSelectedCategories] = useState<number[]>(
+      getParam('categories', Params.ARRAY).map(id => Number(id))
+   );
    
    const initialValues: FormValues = {
-      peopleRequired: '',
-      availablePlaces: '',
-      onlyFree: false,
-      maxPrice: '',
+      peopleRequired: getParam('peopleRequired'),
+      availablePlaces: getParam('availablePlaces'),
+      onlyFree:  getParam('onlyFree', Params.BOOLEAN),
+      maxPrice: getParam('price'),
    }
 
-   const handleSubmit = (formData: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
-      console.log(formData, selectedCategories);
-      
+   const handleSubmit = (formData: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
       setSubmitting(false);
       props.close();
-   }
+      setFormFilters({
+         peopleRequired: formData.peopleRequired,
+         availablePlaces: formData.availablePlaces,
+         onlyFree:  formData.onlyFree,
+         price: formData.maxPrice,
+      });
+      updateParams({
+         peopleRequired: formData.peopleRequired,
+         availablePlaces: formData.availablePlaces,
+         onlyFree:  formData.onlyFree ? formData.onlyFree : '',
+         price: formData.maxPrice,
+         categories: selectedCategories
+      })
+   };
 
+   useEffect(() => {
+      props.setFilters(prev => ({
+         ...prev,
+         availablePlaces: formFilters.availablePlaces,
+         categories: selectedCategories,
+         onlyFree: formFilters.onlyFree,
+         peopleRequired: formFilters.peopleRequired,
+         price: formFilters.price,
+      }))
+   }, [formFilters, setSelectedCategories]);
+   
    return (
       <BodyBlur blurFlag={props.isOpened}>
          <div

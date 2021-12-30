@@ -4,11 +4,14 @@ import { MenuBurger } from 'icons';
 import React from 'react';
 import s from './SubHeader.module.scss';
 import arrow from 'images/arrow.svg';
+import { SortBy } from 'tools/variables'
 
 
 type PropsType = {
    eventsCount: number
    openFilters: () => void
+   sortMode: string
+   setSortMode: React.Dispatch<React.SetStateAction<string>>
 }
 
 const SubHeader: React.FC<PropsType> = (props) => {
@@ -16,7 +19,10 @@ const SubHeader: React.FC<PropsType> = (props) => {
       <div className={s.subHeader}>
          <Container className={s.container}>
             <h1 className={s.heading}>{props.eventsCount} active events</h1>
-            <Sorting />
+            <Sorting
+               sortMode={props.sortMode}
+               setSortMode={props.setSortMode}
+            />
             <button onClick={props.openFilters} className={s.filters}>
                <span>Filter events</span>
                <MenuBurger size={20} />
@@ -27,33 +33,30 @@ const SubHeader: React.FC<PropsType> = (props) => {
 }
 
 
-const SortBy = { PRICE: 'price', DATE: 'time', DEFAULT: 'id' }
+type SortingProps = {
+   sortMode: string
+   setSortMode: React.Dispatch<React.SetStateAction<string>>
+}
 
-type FormValues = {
-   sortBy: typeof SortBy[keyof typeof SortBy]
-};
-
-const Sorting = () => {
-   const initialValues: FormValues = { sortBy: 'price' };
-
-   const handleSubmit = (formData: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
-      console.log(formData.sortBy);
-      setSubmitting(false);
-      resetForm({});
-   };
+const Sorting: React.FC<SortingProps> = (props) => {
+   const handleChange = (event: any) => {
+      props.setSortMode(event.target.value)
+   }
    
    return (
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-         {() => (
-         <Form>
-            <Field as='select' name='sortBy' className={s.select} style={{backgroundImage: `url(${arrow})`}}>
-               <option value={SortBy.DEFAULT}>Newest</option>
-               <option value={SortBy.PRICE}>By price</option>
-               <option value={SortBy.DATE}>By date</option>
-            </Field>
-         </Form>
-         )}
-      </Formik>
+      <select
+         value={props.sortMode}
+         onChange={handleChange}
+         className={s.select}
+         style={{backgroundImage: `url(${arrow})`}}
+      >
+         <option value={SortBy.NEWEST}>Newest</option>
+         <option value={SortBy.OLDEST}>Oldest</option>
+         <option value={SortBy.PRICE_UP}>Price Low to High</option>
+         <option value={SortBy.PRICE_DOWN}>Price High to Low</option>
+         <option value={SortBy.DATE_UP}>Date Low to High</option>
+         <option value={SortBy.DATE_DOWN}>Date High to Low</option>
+      </select>
    );
 }
 

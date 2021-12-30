@@ -1,26 +1,28 @@
 import React from 'react';
 import s from './Card.module.scss';
 import { Container, TransitionSkeleton } from 'components/common';
+import { usePopUp } from 'hooks';
+import EventPopUp from 'components/event-pop-up/EventPopUp';
+import Category from 'components/category/Category';
+import { monthNames } from 'tools/variables';
+import { addLeadingZero } from 'tools/functions';
 
 
-type PropsType = {
-   title: string
-   description: string
-   photo: string | null
-   time: string
-   people_required: number
-   people_joined: number
-   place: string
-   price: number
-   categories: CategoryType[]
-}
+type PropsType = EventType
 
 const EventCard: React.FC<PropsType> = (props) => {
-   return (
-      <div className={s.card}>
-         <h5 className={s.title}>{props.title}</h5>
-         <span className={s.time}>December 22, Wednesday</span>
-         <p className={s.description}>{props.description}</p>
+   const [isOpened, setIsOpened, popUpRef] = usePopUp<HTMLDivElement>();
+
+   const date = new Date(props.time);
+   const timeString = `${monthNames[date.getMonth()]} ${date.getDate()}, ${addLeadingZero(date.getHours())}:${addLeadingZero(date.getMinutes())}`
+
+   return <>
+      <div className={s.card} onClick={() => setIsOpened(true)}>
+         <h5 className={s.title}>{props.name}</h5>
+         <span className={s.time}>{timeString}</span>
+         <div className={s.descriptionWrapper}>
+            <p className={s.description}>{props.description}</p>
+         </div>
          {props.price > 0 && (
             <p className={s.price}>Price: ${props.price}</p>
          )}
@@ -38,7 +40,16 @@ const EventCard: React.FC<PropsType> = (props) => {
             ))}
          </div>
       </div>
-   );
+      <EventPopUp
+         isOpened={isOpened}
+         close={() => setIsOpened(false)}
+         popUpRef={popUpRef}
+         event={{
+            ...props,
+            time: timeString
+         }}
+      /> 
+   </>;
 }
 
 
@@ -59,14 +70,6 @@ export const EventCardSkeleton = () => {
    );
 }
 
-
-const Category: React.FC<{name: string, color: string}> = ({ name, color }) => {
-   return (
-      <div className={s.category} style={{borderColor: color}}>
-         <span style={{color: color}}>{name}</span>
-      </div>
-   );
-}
 
 export const CardsContainer: React.FC = ({ children }) => {
    return (

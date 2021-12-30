@@ -1,20 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
 import s from './Header.module.scss';
 import { Container } from 'components/common';
 import { Search } from 'icons';
+import { useQueryParams } from 'hooks';
 
+
+type PropsType = {
+   setSearch: (search: string) => void
+}
 
 type FormValues = { term: string }
 
-const Header: React.FC = () => {
-   const initialValues: FormValues = { term: '' }
+const Header: React.FC<PropsType> = (props) => {
+   const { getParam, updateParams } = useQueryParams()
+   const [term, setTerm] = useState(getParam('search'))
    
-   const handleSubmit = (formData: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
-      console.log(formData.term);
-      setSubmitting(false);
-      resetForm({});
+   const initialValues: FormValues = {
+      term: getParam('search')
    }
+
+   const handleSubmit = (formData: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
+      setSubmitting(false)
+      setTerm(formData.term)
+      updateParams({ search: formData.term })
+   }
+
+   useEffect(() => {
+      props.setSearch(term)
+   }, [term]);
 
    return (
       <header className={s.header}>
@@ -28,8 +42,7 @@ const Header: React.FC = () => {
                   <Field 
                      autoComplete='off'
                      type='text'
-                     name='temp'
-                     id='temp'
+                     name='term'
                      className={s.searchInput}
                      placeholder='Search'
                   />

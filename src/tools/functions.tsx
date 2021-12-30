@@ -28,3 +28,22 @@ export function composeRoutesFromArr(arr: RouteType[]) {
       />
    ))
 }
+
+export function addLeadingZero(n: number) {
+   return n < 10 ? `0${n}` : `${n}`
+}
+
+export function generateQueryString(params: {[k: string]: string | boolean | number[]}) {
+   return Object.entries(params).reduce((acc, [paramName, paramValue]) => {
+      switch (typeof paramValue) {
+         // number[]
+         case 'object': return acc += paramValue.length ? `&${paramName}=${paramValue.join('+')}` : ''
+
+         // string
+         case 'string': return acc += paramValue && `&${paramName}=${paramValue}`
+
+         // boolean
+         case 'boolean': return acc += paramValue ? `&${paramName}` : ''
+      }
+   }, '');
+}
