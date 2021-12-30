@@ -27,7 +27,7 @@ type FormValues = {
 }
 
 const FiltersForm: React.FC<PropsType> = (props) => {
-   const { getParam, updateParams } = useQueryParams();
+   const { getParam, updateParams } = useQueryParams<FilterQueryParams>();
    const [areCategoriesOpened, setAreCategoriesOpened, categoriesRef] = usePopUp<HTMLDivElement>();
 
    const queryParams = {

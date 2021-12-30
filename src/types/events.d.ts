@@ -39,7 +39,7 @@ type CalalogEventFilters = {
 }
 
 type FilterQueryParams = {
-   [P in keyof CalalogEventFilters]?: boolean | string | number[]
+   [k in keyof CalalogEventFilters]?: boolean | string | number[]
 }
 
 type SmallCategory = {

@@ -11,17 +11,18 @@ type ParamType<P extends Params> =
    : P extends Params.BOOLEAN ? boolean
    : string
 
-export function useQueryParams() {
+   
+export function useQueryParams<F extends {[k: string]: undefined | string | boolean | number[]}>() {
    const [searchParams, setSearchParams] = useSearchParams();
-
-   function getParam<P extends Params = Params.STRING>(param: keyof FilterQueryParams, paramType?: P): ParamType<P>;
-   function getParam(param: keyof FilterQueryParams, paramType?: Params) {
+   
+   function getParam<P extends Params = Params.STRING>(param: keyof F, paramType?: P): ParamType<P>;
+   function getParam(param: keyof F, paramType?: Params) {
       switch (paramType) {
-         case Params.ARRAY: return searchParams.getAll(param) || []
+         case Params.ARRAY: return searchParams.getAll(param as string) || []
          case Params.BOOLEAN:
-            const match = searchParams.get(param) || 'false'
+            const match = searchParams.get(param as string) || 'false'
             return ['true', 'false'].includes(match) ? match === 'true' : match
-         default: return searchParams.get(param) || ''
+         default: return searchParams.get(param as string) || ''
       }
    }
 
