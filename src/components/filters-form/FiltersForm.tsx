@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { usePopUp, useQueryParams } from 'hooks';
+import { Params } from 'hooks/useQueryParams';
+import { conditionClassName } from 'tools/functions';
 import s from './FiltersForm.module.scss';
 import { BodyBlur } from 'components/common';
-import { conditionClassName } from 'tools/functions';
-import Cross from 'icons/cross/Cross';
-import { usePopUp, useQueryParams } from 'hooks';
 import { CategoriesLabel, CategoriesSelection } from 'components/common/select-categories/SelectCategories';
-import { Params } from 'hooks/useQueryParams';
+import { Cross } from 'icons';
 
 
 

@@ -3,5 +3,6 @@ import Arrow from './arrow/Arrow';
 import MenuBurger from './menu-burger/MenuBurger'
 import Eye from './eye/Eye'
 import Error from './error/Error'
+import Cross from './cross/Cross'
 
-export { Search, Arrow, MenuBurger, Eye, Error }
+export { Search, Arrow, MenuBurger, Eye, Error, Cross }

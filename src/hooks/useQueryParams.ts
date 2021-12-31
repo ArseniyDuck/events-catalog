@@ -26,7 +26,7 @@ export function useQueryParams<F extends {[k: string]: undefined | string | bool
       }
    }
 
-   const updateParams = (params: FilterQueryParams) => {
+   const updateParams = (params: F) => {
       for (const [param, paramValue] of Object.entries(params)) {
          if (paramValue instanceof Array) {
             searchParams.delete(param)
