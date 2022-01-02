@@ -45,9 +45,5 @@ export function useQueryParams<F extends {[k: string]: undefined | string | bool
       setSearchParams(searchParams)
    }
 
-   const resetParams = () => {
-      setSearchParams({})
-   }
-
-   return { getParam, updateParams, resetParams }
+   return { getParam, updateParams }
 }

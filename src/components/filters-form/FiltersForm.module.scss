@@ -30,20 +30,8 @@
 
 .cross {
    position: absolute;
-   display: flex;
-   right: 13px;
-   top: 23px;
-   padding: 7px;
-   border-radius: 50%;
-   transition: var(--hover);
-
-   @media (any-hover: hover) {
-      &:hover {
-         cursor: pointer;
-         background: rgba(0, 0, 0, .1);
-         transition: var(--hover);
-      }
-   }
+   right: 30px;
+   top: 30px;
 }
 
 .filterField {

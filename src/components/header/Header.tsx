@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { useFormik } from 'formik';
 import { useQueryParams } from 'hooks';
 import s from './Header.module.scss';
 import { Container } from 'components/common';
-import { Search } from 'icons';
+import { Cross, Search } from 'icons';
 
 
 type PropsType = {
@@ -13,42 +13,51 @@ type PropsType = {
 type FormValues = { term: string }
 
 const Header: React.FC<PropsType> = (props) => {
-   const { getParam, updateParams } = useQueryParams()
-   const [term, setTerm] = useState(getParam('search'))
-   
-   const initialValues: FormValues = {
-      term: getParam('search')
-   }
+   const { getParam, updateParams } = useQueryParams<Pick<CalalogEventFilters, 'search'>>()
+   const [searchTerm, setSearchTerm] = useState(getParam('search'))
 
-   const handleSubmit = (formData: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
-      setSubmitting(false)
-      setTerm(formData.term)
-      updateParams({ search: formData.term })
-   }
+   const formik = useFormik<FormValues>({
+      initialValues: {
+         term: getParam('search')
+      },
+      onSubmit: (formData, { setSubmitting }) => {
+         setSubmitting(false)
+         setSearchTerm(formData.term)
+         updateParams({ search: formData.term })
+      },
+      onReset: () => {
+         formik.setFieldValue('term', '')
+         setSearchTerm('')
+         updateParams({ search: '' })
+      },
+   });
 
    useEffect(() => {
-      props.setSearch(term)
-   }, [term]);
+      props.setSearch(searchTerm)
+   }, [searchTerm]);
 
    return (
       <header className={s.header}>
          <Container className={s.container}>
-            <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-               {() => (
-               <Form className={s.search}>
-                  <button type='submit'>
-                     <Search size={25} color='var(--light-grey)' />
+            <form className={s.search} onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+               <button type='submit'>
+                  <Search size={25} color='var(--light-grey)' />
+               </button>
+               <input
+                  autoComplete='off'
+                  type='text'
+                  name='term'
+                  className={s.searchInput}
+                  placeholder='Search by title'
+                  onChange={formik.handleChange}
+                  value={formik.values.term}
+               />
+               {formik.values.term && (
+                  <button type='reset'>
+                     <Cross isHover />
                   </button>
-                  <Field 
-                     autoComplete='off'
-                     type='text'
-                     name='term'
-                     className={s.searchInput}
-                     placeholder='Search by title'
-                  />
-               </Form>
                )}
-            </Formik>
+            </form>
             <button className={s.create}>Create</button>
             <div className={`${s.avatar} ibg`}></div>
          </Container>

@@ -33,17 +33,18 @@ export function addLeadingZero(n: number) {
    return n < 10 ? `0${n}` : `${n}`
 }
 
-export function generateQueryString(params: {[k: string]: string | boolean | number[]}) {
+export function generateQueryString(params: {[k: string]: string | boolean | number[] | number}) {
    return Object.entries(params).reduce((acc, [paramName, paramValue]) => {
       switch (typeof paramValue) {
          // number[]
-         case 'object': return acc += paramValue.length ? `&${paramName}=${paramValue.join('+')}` : ''
+         case 'object': return paramValue.length ? (acc+=`&${paramName}=${paramValue.join('+')}`) : acc
 
          // string
-         case 'string': return acc += paramValue && `&${paramName}=${paramValue}`
+         case 'number':
+         case 'string': return paramValue ? (acc+=`&${paramName}=${String(paramValue)}`) : acc
 
          // boolean
-         case 'boolean': return acc += paramValue ? `&${paramName}` : ''
+         case 'boolean': return paramValue ? (acc+=`&${paramName}`) : acc
       }
    }, '');
 }
