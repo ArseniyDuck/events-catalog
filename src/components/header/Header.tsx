@@ -24,13 +24,14 @@ const Header: React.FC<PropsType> = (props) => {
          setSubmitting(false)
          setSearchTerm(formData.term)
          updateParams({ search: formData.term })
-      },
-      onReset: () => {
-         formik.setFieldValue('term', '')
-         setSearchTerm('')
-         updateParams({ search: '' })
-      },
+      }
    });
+
+   const handleReset = () => {
+      formik.setFieldValue('term', '')
+      setSearchTerm('')
+      updateParams({ search: '' })
+   }
 
    useEffect(() => {
       props.setSearch(searchTerm)
@@ -39,8 +40,8 @@ const Header: React.FC<PropsType> = (props) => {
    return (
       <header className={s.header}>
          <Container className={s.container}>
-            <form className={s.search} onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-               <button type='submit'>
+            <form className={s.search} onSubmit={formik.handleSubmit}>
+               <button type='submit' disabled={formik.isSubmitting}>
                   <Search size={25} color='var(--light-grey)' />
                </button>
                <input
@@ -53,7 +54,7 @@ const Header: React.FC<PropsType> = (props) => {
                   value={formik.values.term}
                />
                {formik.values.term && (
-                  <button type='reset'>
+                  <button onClick={handleReset} type='reset'>
                      <Cross isHover />
                   </button>
                )}

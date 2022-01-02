@@ -54,31 +54,34 @@ const FiltersForm: React.FC<PropsType> = (props) => {
          })
          props.close()
       },
-      onReset: () => {
-         formik.setFieldValue('availablePlaces', '')
-         formik.setFieldValue('maxPrice', '')
-         formik.setFieldValue('peopleRequired', '')
-         formik.setFieldValue('onlyFree', false)
-
-         setSelectedCategories([])
-         setFormFilters({
-            availablePlaces: '',
-            maxPrice: '',
-            onlyFree: false,
-            peopleRequired: ''
-         })
-
-         updateParams({
-            availablePlaces: '',
-            categories: [],
-            maxPrice: '',
-            onlyFree: '',
-            peopleRequired: '',
-         })
-
-         props.close()
-      },
    });
+
+   const handleReset = () => {
+      formik.setValues({
+         availablePlaces: '',
+         maxPrice: '',
+         onlyFree: false,
+         peopleRequired: '',
+      })
+
+      setSelectedCategories([])
+      setFormFilters({
+         availablePlaces: '',
+         maxPrice: '',
+         onlyFree: false,
+         peopleRequired: ''
+      })
+
+      updateParams({
+         availablePlaces: '',
+         categories: [],
+         maxPrice: '',
+         onlyFree: '',
+         peopleRequired: '',
+      })
+
+      props.close()
+   }
    
    useEffect(() => {
       props.setFilters(prev => ({
@@ -98,7 +101,7 @@ const FiltersForm: React.FC<PropsType> = (props) => {
             <button onClick={props.close} className={s.cross}>
                <Cross isHover size={17}  />
             </button>
-            <form onSubmit={formik.handleSubmit} onReset={formik.handleReset} className={s.form}>
+            <form onSubmit={formik.handleSubmit} className={s.form}>
                <CategoriesLabel
                   onClick={() => setAreCategoriesOpened(true)}
                   selectedCategories={selectedCategories}
@@ -153,8 +156,8 @@ const FiltersForm: React.FC<PropsType> = (props) => {
                   />
                </label>
                <div className={s.buttons}>
-                  <button className={s.reset} type='reset'>Reset</button>
-                  <button className={s.apply} type='submit'>Apply</button>
+                  <button className={s.reset} onClick={handleReset} type='reset'>Reset</button>
+                  <button className={s.apply} disabled={formik.isSubmitting} type='submit'>Apply</button>
                </div>
             </form>
             <CategoriesSelection

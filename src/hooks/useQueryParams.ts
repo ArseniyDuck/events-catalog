@@ -42,6 +42,9 @@ export function useQueryParams<F extends {[k: string]: undefined | string | bool
          }
       }
 
+      console.log(searchParams.toString());
+      
+
       setSearchParams(searchParams)
    }
 
