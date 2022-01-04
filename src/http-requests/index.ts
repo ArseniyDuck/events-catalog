@@ -1,11 +1,11 @@
 import axios, { AxiosError, AxiosRequestHeaders } from 'axios';
 import Cookies from 'js-cookie';
-import { unsafeMethods } from 'tools/variables';
+import { API_URL, unsafeMethods } from 'tools/variables';
 
 
 const $api = axios.create({
    withCredentials: true,
-   baseURL: 'http://localhost:8000/',
+   baseURL: API_URL,
 });
 
 $api.interceptors.request.use(

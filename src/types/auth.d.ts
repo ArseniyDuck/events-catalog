@@ -1,6 +1,9 @@
 type User = {
    id: number | null
    username: string
+   fullname: string
+   phone_number: string
+   photo: string | null
 }
 
 type SignUpUser = {

@@ -4,21 +4,21 @@ import SignIn from 'pages/auth/SignIn';
 import MainPage from 'pages/main-page/MainPage';
 import Profile from 'pages/profile/Profile';
 
-export const routeLinks = {
-   MAIN: '/',
-   PROFILE: '/profile',
-   SIGN_IN: '/sign-in',
-   REGISTRATION: '/registration',
-} as const;
+export enum RouteLinks {
+   MAIN = '/',
+   PROFILE = '/profile',
+   SIGN_IN = '/sign-in',
+   REGISTRATION = '/registration',
+}
 
 export type RouteType = {
-   path: typeof routeLinks[keyof typeof routeLinks]
+   path: RouteLinks
    element: React.ReactElement<any>
 }
 
 export const routes: RouteType[] = [
-   { path: routeLinks.MAIN, element: <MainPage /> },
-   { path: routeLinks.PROFILE, element: <Profile /> },
-   { path: routeLinks.SIGN_IN, element: <SignIn /> },
-   { path: routeLinks.REGISTRATION, element: <Registration /> },
+   { path: RouteLinks.MAIN, element: <MainPage /> },
+   { path: RouteLinks.PROFILE, element: <Profile /> },
+   { path: RouteLinks.SIGN_IN, element: <SignIn /> },
+   { path: RouteLinks.REGISTRATION, element: <Registration /> },
 ];

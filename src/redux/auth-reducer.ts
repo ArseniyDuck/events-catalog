@@ -9,11 +9,16 @@ type initialStateType = {
    signUpErrors: string[]
 };
 
+const intialUser = {
+   id: null,
+   username: '',
+   fullname: '',
+   phone_number: '',
+   photo: null,
+}
+
 const initialState: initialStateType = {
-   user: {
-      id: null,
-      username: '',
-   },
+   user: intialUser,
    signUpErrors: [],
 
 };
@@ -82,8 +87,7 @@ export const authSlice = createSlice({
       },
       // todo: clear all reducer, not only user info
       logout(state) {
-         state.user.username = ''
-         state.user.id = null
+         state.user = intialUser
          localStorage.removeItem('accessToken')
          localStorage.removeItem('refreshToken')
       },

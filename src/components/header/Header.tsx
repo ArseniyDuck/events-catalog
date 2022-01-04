@@ -4,6 +4,9 @@ import { useQueryParams } from 'hooks';
 import s from './Header.module.scss';
 import { Container } from 'components/common';
 import { Cross, Search } from 'icons';
+import CreationButton from 'components/creation-button/CreationButton';
+import { RouteLinks } from 'app-routing';
+import { Link } from 'react-router-dom';
 
 
 type PropsType = {
@@ -23,19 +26,15 @@ const Header: React.FC<PropsType> = (props) => {
       onSubmit: (formData, { setSubmitting }) => {
          setSubmitting(false)
          setSearchTerm(formData.term)
-         updateParams({ search: formData.term })
+         updateParams({search: formData.term})
       }
    });
 
    const handleReset = () => {
       formik.setFieldValue('term', '')
       setSearchTerm('')
-      updateParams({ search: '' })
+      updateParams({search: ''})
    }
-
-   useEffect(() => {
-      props.setSearch(searchTerm)
-   }, [searchTerm]);
 
    return (
       <header className={s.header}>
@@ -59,8 +58,10 @@ const Header: React.FC<PropsType> = (props) => {
                   </button>
                )}
             </form>
-            <button className={s.create}>Create</button>
-            <div className={`${s.avatar} ibg`}></div>
+            <CreationButton text='Create' />
+            <Link to={RouteLinks.PROFILE}>
+               <div className={`${s.avatar} ibg`}></div>
+            </Link>
          </Container>
       </header>
    );

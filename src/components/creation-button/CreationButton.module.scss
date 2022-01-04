@@ -1,0 +1,14 @@
+.create {
+   padding: 8px 25px;
+   font-size: 18px;
+   color: #fff;
+   background: var(--main-color);
+   transition: var(--hover);
+
+   @media (any-hover: hover) {
+      &:hover {
+         background: var(--bright-main-color);
+         transition: var(--hover);
+      }
+   }
+}

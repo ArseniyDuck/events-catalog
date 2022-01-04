@@ -5,7 +5,7 @@ import { signIn } from '../../redux/auth-reducer';
 import { useAppDispatch, useInputType } from '../../hooks';
 import a from './Auth.module.scss';
 import { Eye } from 'icons';
-import { routeLinks } from 'app-routing';
+import { RouteLinks } from 'app-routing';
 
 type PropsType = {};
 
@@ -15,7 +15,7 @@ const SignIn: React.FC<PropsType> = (props) => {
          <div className={a.body}>
             <h1 className={a.heading}>Sign In</h1>
             <SignInForm />
-            <p className={a.linkText}>Don't have an account? <Link className={a.link} to={routeLinks.REGISTRATION}>Registration</Link></p>
+            <p className={a.linkText}>Don't have an account? <Link className={a.link} to={RouteLinks.REGISTRATION}>Registration</Link></p>
          </div>
       </div>
    );

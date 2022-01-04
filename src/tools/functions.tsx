@@ -1,22 +1,25 @@
 import React from 'react';
 import { Route } from 'react-router';
 import { RouteType } from 'app-routing';
+import { API_URL, monthNames } from './variables';
 
 
 export function conditionClassName(initialClassName: string, condition: Boolean, optionalClassName: string) {
    if (condition) {
-      return `${initialClassName} ${optionalClassName}`;
+      return `${initialClassName} ${optionalClassName}`
    } else {
-      return initialClassName;
+      return initialClassName
    }
 }
 
 export function getArrayOfComponents(Component: React.ComponentType, count: number) {
-   const components = [];
+   const components = []
+
    for (let i = 0; i < count; i++) {
-      components.push(<Component key={i} />);
+      components.push(<Component key={i} />)
    }
-   return components;
+
+   return components
 }
 
 export function composeRoutesFromArr(arr: RouteType[]) {
@@ -47,4 +50,69 @@ export function generateQueryString(params: {[k: string]: string | boolean | num
          case 'boolean': return paramValue ? (acc+=`&${paramName}`) : acc
       }
    }, '');
+}
+
+export function phoneNumber(roughNumber: string) {
+   if (!roughNumber) {
+      return ''
+   } else {
+      const countryCode = roughNumber.slice(0, 2)
+      const operator = roughNumber.slice(2, 5)
+      const subscriberNumberFragmetns = [
+         roughNumber.slice(5, 8),
+         roughNumber.slice(8, 10),
+         roughNumber.slice(10, 12),
+      ]
+   
+      return `${countryCode} (${operator}) ${subscriberNumberFragmetns.join('-')}`
+   }
+}
+
+function removeRedutantSlashes(url: string) {
+   let returnString = url
+   const lastIndex = url.length - 1
+
+   if (url[lastIndex] === '/') {
+      returnString = url.slice(0, lastIndex)
+   }
+
+   if (url[0] === '/') {
+      returnString = url.slice(1, lastIndex + 1)
+   }
+
+   return returnString
+}
+
+export function imageUrl(relativePath: string) {
+   let domain = removeRedutantSlashes(API_URL)
+   let path = removeRedutantSlashes(relativePath)
+
+   return `${domain}/${path}/`
+}
+
+export function timeToString(time: string) {
+   const date = new Date(time);
+
+   const month = monthNames[date.getMonth()]
+   const dayNumber = date.getDate()
+   const hours = addLeadingZero(date.getHours())
+   const minutes = addLeadingZero(date.getMinutes())
+
+   return `${month} ${dayNumber}, ${hours}:${minutes}`
+}
+
+export function getHighlightedText(text: string, highlight: string, highlightStyle: React.CSSProperties) {
+   const fragments = text.split(new RegExp(`(${highlight})`, 'gi'));
+   
+   return <>
+      {fragments.map((fragment, index) => {
+         const isHighlighted = fragment.toLowerCase() === highlight.toLowerCase()
+         
+         return (
+            <span key={index} style={isHighlighted ? highlightStyle : {}}>
+               {fragment}
+            </span>
+         );
+      })}
+   </>;
 }

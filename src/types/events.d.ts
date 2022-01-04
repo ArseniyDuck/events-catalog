@@ -12,6 +12,10 @@ type CatalogEvent = {
    creator: CalalogEventAuthor
 }
 
+type MyEvent = CatalogEvent & {
+   is_active: boolean
+}
+
 type Category = {
    id: number
    name: string

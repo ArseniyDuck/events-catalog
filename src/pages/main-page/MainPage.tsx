@@ -8,14 +8,10 @@ import EventCard, { CardsContainer, EventCardSkeleton } from 'components/card/Ca
 import { usePopUp } from 'hooks/usePopUp';
 import FiltersForm from 'components/filters-form/FiltersForm';
 import { DefaultFilters, SortBy } from 'tools/variables';
-import { useNavigate } from 'react-router-dom';
-import { routeLinks } from 'app-routing';
 
 type PropsType = {};
 
 const MainPage: React.FC = () => {
-   const navigate = useNavigate()
-
    const [sortMode, setSortMode] = useState<string>(SortBy.NEWEST);
    const [filters, setFilters] = useState<CalalogEventFilters>(DefaultFilters);
 
@@ -27,14 +23,6 @@ const MainPage: React.FC = () => {
    const setSearch = (search: string) => {
       setFilters(prev => ({ ...prev, search }))
    }
-
-   // const isFiltered = JSON.stringify(filters) !== JSON.stringify(DefaultFilters)
-   
-   // const resetFilters = () => {
-   //    setFilters(DefaultFilters);
-   //    navigate(routeLinks.MAIN);
-   // }
-
    
    return <>
       <Header setSearch={setSearch} />
@@ -58,16 +46,17 @@ const MainPage: React.FC = () => {
             : catalogEvents?.map(event => (
                <EventCard
                   key={event.id}
-                  {...event}
-                  // name={event.name}
-                  // description={event.description}
-                  // photo={event.photo}
-                  // time={event.time}
-                  // people_required={event.people_required}
-                  // people_joined={event.people_joined}
-                  // place={event.place}
-                  // price={event.price}
-                  // categories={event.categories}
+                  id={event.id}
+                  name={event.name}
+                  description={event.description}
+                  photo={event.photo}
+                  time={event.time}
+                  people_required={event.people_required}
+                  people_joined={event.people_joined}
+                  place={event.place}
+                  price={event.price}
+                  categories={event.categories}
+                  creator={event.creator}
                />
             ))
          }

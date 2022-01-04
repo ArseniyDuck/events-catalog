@@ -17,7 +17,7 @@ const EventPopUp: React.FC<PropsType> = (props) => {
       <BodyBlur isHoverTransition blurFlag={props.isOpened}>
          <div ref={props.popUpRef} className={conditionClassName(s.wrapper, props.isOpened, s.opened)}>
             <p className={s.heading}>{props.event.name}</p>
-            <p className={s.time}>{props.event.time}</p>
+            <time className={s.time}>{props.event.time}</time>
             <p className={s.description}>{props.event.description}</p>
             <table className={s.table}>
                <tbody>

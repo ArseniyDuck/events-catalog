@@ -1,0 +1,58 @@
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+
+@mixin show-dropdown() {
+   @include visible-element();
+   z-index: 200;
+}
+
+.dropdown {
+   position: relative;
+   
+   @media (any-hover: hover) {
+      &.hoverIsEnabled:hover > .dropdownBody {
+         @include show-dropdown();
+      }
+   }
+}
+
+.label {
+   display: inline-block;
+}
+
+.dropdownBody {
+   position: absolute;
+   right: 0;
+   box-shadow: 0 16px 24px rgba(0, 0, 0, .3), 0 6px 8px rgba(0, 0, 0, .2);
+   @include hidden-element();
+
+   &.clickIsEnabled.clicked {
+      @include show-dropdown();
+   }
+
+   @media (any-hover: none) {
+      &.clicked { 
+         @include show-dropdown();
+      }
+   }
+
+   &.bottomPositioned {
+      top: 0px;
+      bottom: auto;
+   }
+
+   &.topPositioned {
+      top: auto;
+      bottom: 0px;
+   }
+
+   &.defaultPositioned {
+      top: 100%;
+      bottom: auto;
+   }
+
+   &.overflow {
+      overflow-y: auto;
+      @include hide-scrollbar();
+   }
+}

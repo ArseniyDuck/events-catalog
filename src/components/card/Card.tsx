@@ -4,8 +4,7 @@ import { Container, TransitionSkeleton } from 'components/common';
 import { usePopUp } from 'hooks';
 import EventPopUp from 'components/event-pop-up/EventPopUp';
 import Category from 'components/category/Category';
-import { monthNames } from 'tools/variables';
-import { addLeadingZero } from 'tools/functions';
+import { timeToString } from 'tools/functions';
 
 
 type PropsType = CatalogEvent
@@ -13,13 +12,10 @@ type PropsType = CatalogEvent
 const EventCard: React.FC<PropsType> = (props) => {
    const [isOpened, setIsOpened, popUpRef] = usePopUp<HTMLDivElement>();
 
-   const date = new Date(props.time);
-   const timeString = `${monthNames[date.getMonth()]} ${date.getDate()}, ${addLeadingZero(date.getHours())}:${addLeadingZero(date.getMinutes())}`
-
    return <>
       <div className={s.card} onClick={() => setIsOpened(true)}>
          <h5 className={s.title}>{props.name}</h5>
-         <span className={s.time}>{timeString}</span>
+         <time className={s.time}>{timeToString(props.time)}</time>
          <div className={s.descriptionWrapper}>
             <p className={s.description}>{props.description}</p>
          </div>
@@ -46,7 +42,7 @@ const EventCard: React.FC<PropsType> = (props) => {
          popUpRef={popUpRef}
          event={{
             ...props,
-            time: timeString
+            time: timeToString(props.time)
          }}
       /> 
    </>;
