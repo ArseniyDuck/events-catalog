@@ -1,7 +1,13 @@
-.create {
-   padding: 8px 25px;
+.button {
+   display: flex;
+   width: 100%;
+   align-items: center;
+   justify-content: center;
+   height: 45px;
    font-size: 18px;
+   font-weight: 600;
    color: #fff;
+   margin-top: 15px;
    background: var(--main-color);
    transition: var(--hover);
 

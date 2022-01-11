@@ -3,11 +3,12 @@ import s from './MainPage.module.scss';
 import Header from 'components/header/Header';
 import { useGetCategoriesQuery, useGetEventsQuery } from 'redux/eventsApi';
 import SubHeader from 'components/sub-header/SubHeader';
-import { getArrayOfComponents } from 'tools/functions';
+import { componentList } from 'tools/functions';
 import EventCard, { CardsContainer, EventCardSkeleton } from 'components/card/Card';
-import { usePopUp } from 'hooks/usePopUp';
+import { useModal } from 'hooks';
 import FiltersForm from 'components/filters-form/FiltersForm';
 import { DefaultFilters, SortBy } from 'tools/variables';
+import EventCreation from 'components/event-creation/EventCreation';
 
 type PropsType = {};
 
@@ -16,16 +17,19 @@ const MainPage: React.FC = () => {
    const [filters, setFilters] = useState<CalalogEventFilters>(DefaultFilters);
 
    const {data: catalogEvents=[], isLoading: isLoadingEvents} = useGetEventsQuery({sort: sortMode, filter: filters});
-   const {data: categories=[], isLoading: isLoadingCategories} = useGetCategoriesQuery();
 
-   const [isFilterOpened, setisFilterOpened, filterRef] = usePopUp<HTMLDivElement>();
+   const [isFilterOpened, setisFilterOpened, filterRef] = useModal<HTMLDivElement>()
+   const [isCreationOpened, setIsCreationOpened, creationRef] = useModal<HTMLDivElement>()
 
    const setSearch = (search: string) => {
       setFilters(prev => ({ ...prev, search }))
    }
    
    return <>
-      <Header setSearch={setSearch} />
+      <Header
+         setSearch={setSearch}
+         openCreation={() => setIsCreationOpened(true)}
+      />
       <SubHeader
          eventsCount={catalogEvents ? catalogEvents.length : 0}
          openFilters={() => setisFilterOpened(true)}
@@ -36,13 +40,16 @@ const MainPage: React.FC = () => {
          isOpened={isFilterOpened}
          close={() => setisFilterOpened(false)}
          filtersRef={filterRef}
-         categories={categories}
-         isLoading={isLoadingCategories}
          setFilters={setFilters}
+      />
+      <EventCreation
+         isOpened={isCreationOpened}
+         close={() => setIsCreationOpened(false)}
+         innerRef={creationRef}
       />
       <CardsContainer>
          {isLoadingEvents
-            ? getArrayOfComponents(EventCardSkeleton, 20)
+            ? componentList(EventCardSkeleton, 20)
             : catalogEvents?.map(event => (
                <EventCard
                   key={event.id}

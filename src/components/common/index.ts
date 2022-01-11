@@ -1,11 +1,11 @@
 import Container from './container/Container';
 import TransitionSkeleton from './transition-skeleton/TransitionSkeleton';
-import BodyBlur from './body-blur/BodyBlur';
+import OpenWithBodyBlur from './open-with-body-blur/OpenWithBodyBlur';
 import Dropdown from './dropdown/Dropdown';
 
 export {
    Container,
    TransitionSkeleton,
-   BodyBlur,
+   OpenWithBodyBlur,
    Dropdown,
 }

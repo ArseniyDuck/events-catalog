@@ -1,42 +1,112 @@
-import { Arrow } from 'icons';
 import React from 'react';
-import { conditionClassName, getArrayOfComponents } from 'tools/functions';
-import { TransitionSkeleton } from '..';
+import { useField } from 'formik';
+import { useGetCategoriesQuery } from 'redux/eventsApi';
+import { conditionClass, componentList } from 'tools/functions';
 import s from './SelectCategories.module.scss';
+import { OpenWithBodyBlur, TransitionSkeleton } from 'components/common';
+import { Arrow } from 'icons';
 
 
-type PropsType = {
-   onClick: () => void
-   categories: PopularCategory[]
-   selectedCategories: number[]
+type SelectProps = {
+   as: 'modal' | 'aside'
+   isOpened: boolean
+   setIsOpened: (isOpened: boolean) => void
+   modalRef: React.RefObject<HTMLDivElement>
+   emptyStateName?: string
+   styles?: React.CSSProperties
 }
 
-export const CategoriesLabel: React.FC<PropsType> = ({selectedCategories, categories, onClick}) => {
-   return (
-      <div onClick={onClick} className={s.formLabel}>
-         <p className={s.labelName}>Categories</p>
-         <p className={s.selectedItems}>
-            {selectedCategories.length ? categories.filter(category => selectedCategories.includes(category.id)).map(category => category.name).join(', ') : 'All'}
+const SelectCategories: React.FC<SelectProps> = ({
+   as: is,
+   isOpened,
+   setIsOpened,
+   modalRef,
+   emptyStateName='Nothing selected',
+   styles,
+}) => {
+   const [
+      {value: selectedCategories },
+      { touched, error },
+      { setValue }
+   ] = useField<number[]>({name: 'categories'});
+
+   const isError = Boolean(touched && error);
+
+   const {
+      data: categories=[],
+      isLoading: isLoadingCategories
+   } = useGetCategoriesQuery();
+
+   return <>
+      <div
+         onClick={() => setIsOpened(true)}
+         className={conditionClass(`${s.formLabel} greyOnInteract`, isError, s.error)}
+         style={styles}
+      >
+         <p className={s.labelName}>
+            Categories
          </p>
-         <Arrow direction='right' size={15} color='var(--grey)' />
+         <p className={s.selectedItems}>
+            {selectedCategories.length
+               ? categories.filter(category =>(
+                  selectedCategories.includes(category.id)
+               )).map(category => category.name).join(', ')
+               : emptyStateName
+            }
+         </p>
+         <Arrow
+            direction='right'
+            size={15}
+            color='var(--grey)'
+         />
       </div>
-   );
+      {isError && (
+         <div className={s.error}>{error}</div>
+      )}
+
+      {is === 'modal'
+         ? (
+            <OpenWithBodyBlur flag={isOpened}>
+               <div ref={modalRef} className={s.categoriesModal}>
+                  <CategoriesSelection
+                     close={() => setIsOpened(false)}
+                     isLoading={isLoadingCategories}
+                     selectedCategories={selectedCategories}
+                     setSelectedCategories={setValue}
+                     categories={categories}
+                  />
+               </div>
+            </OpenWithBodyBlur>
+         )
+         : (
+            <div ref={modalRef} className={conditionClass(s.categoriesSide, isOpened, s.opened)}>
+               <CategoriesSelection
+                  close={() => setIsOpened(false)}
+                  isLoading={isLoadingCategories}
+                  selectedCategories={selectedCategories}
+                  setSelectedCategories={setValue}
+                  categories={categories}
+               />
+            </div>
+         )
+      }
+   </>;
 }
 
 
 type CategoriesSelectionProps = {
-   isOpened: boolean
    close: () => void
-   categoriesRef: React.RefObject<HTMLDivElement>
    selectedCategories: number[]
-   setSelectedCategories: React.Dispatch<React.SetStateAction<number[]>>
-   categories?: PopularCategory[]
+   setSelectedCategories: (categories: number[]) => void
+   categories: PopularCategory[]
    isLoading: boolean
 }
 
 export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) => {  
    const handleCheckboxChange = (category: SmallCategory) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      props.setSelectedCategories(prev =>
+      const prev = [...props.selectedCategories]
+
+      props.setSelectedCategories(
          event.target.checked
          ? [...prev, category.id]
          : prev.filter(categoryId => categoryId !== category.id)
@@ -44,13 +114,17 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
    }
 
    return (
-      <div ref={props.categoriesRef} className={conditionClassName(s.body, props.isOpened, s.opened)}>
+      <div className={s.body}>
          <div className={s.selectionHeader}>
-            <button onClick={props.close} className={s.backToFilters}>
-               <Arrow size={20} direction='left' />
+            <button onClick={props.close} className={s.backToFilters} type='button'>
+               <Arrow size={16} direction='left' />
                <h3 className={s.heading}>Select categories</h3>
             </button>
-            <button onClick={() => props.setSelectedCategories([])} className={s.resetCategories}>
+            <button
+               onClick={() => props.setSelectedCategories([])}
+               className={`${s.resetCategories} greyOnInteract`}
+               type='button'
+            >
                reset
             </button>
          </div>
@@ -59,7 +133,7 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
 
          <h6 className={s.subHeading}>Popular</h6>
          {props.isLoading
-            ? getArrayOfComponents(() => <TransitionSkeleton width={'60%'} height={15} />, 6)
+            ? componentList(() => <TransitionSkeleton width={'60%'} height={15} />, 6)
             : props.categories?.filter(category => category.is_popular).map(category => (
                <CategoryCheckBox
                   key={category.id}
@@ -73,7 +147,7 @@ export const CategoriesSelection: React.FC<CategoriesSelectionProps> = (props) =
 
          <h6 className={s.subHeading}>By alphabet</h6>
          {props.isLoading
-            ? getArrayOfComponents(() => <TransitionSkeleton width={'90%'} height={15} />, 19)
+            ? componentList(() => <TransitionSkeleton width={'90%'} height={15} />, 19)
             : props.categories?.filter(category => !category.is_popular).map(category => (
                <CategoryCheckBox
                   key={category.id}
@@ -115,3 +189,6 @@ const CategoryCheckBox: React.FC<CategoryCheckBoxProps> = (props) => {
       </label>
    );
 }
+
+
+export default SelectCategories;

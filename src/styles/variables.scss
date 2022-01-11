@@ -17,8 +17,9 @@ $selectionColor: rgba(40, 41, 43, 0.5);
    --bright-main-color: #a730df;
    
    --hover: all 0.12s linear;
-   --side-move: all 0.3s ease-out;
+   --side-move: all 0.4s cubic-bezier(0.8, 0.84, 0.44, 1);
 
    --grey: #6e717e;
    --light-grey: #9da2b4;
+   --green: #39df4f;
 }

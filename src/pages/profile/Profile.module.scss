@@ -1,40 +1,16 @@
+@import '../../styles/mixins.scss';
+
 .container {
    min-height: 100vh;
+   padding-bottom: 15px !important;
    background: #fff;
-}
-
-.banner {
-   display: flex;
-   align-items: flex-end;
-   gap: 20px;
-   padding-top: 50px;
-}
-
-.avatar {
-   $size: 250px;
-   width: $size;
-   height: $size;
-   border-radius: 50%;
-   flex-shrink: 0;
-}
-
-.profileData {
-   flex-grow: 1;
-}
-
-.fullname {
-   font-size: 70px;
-}
-
-.userdata {
-   font-size: 20px;
 }
 
 .options {
    display: flex;
    align-items: center;
    gap: 15px;
-   padding: 30px 0 10px 0;
+   padding: 20px 0 10px 0;
 }
 
 .option {
@@ -42,29 +18,12 @@
    padding: 10px;
    text-align: left;
    font-size: 18px;
-   transition: var(--hover);
-
-   @media (any-hover: hover) {
-      &:hover {
-         background: rgba(0, 0, 0, .1);
-         transition: var(--hover);
-      }
-   }
 }
 
 .eventRow {
    display: flex;
    align-items: center;
    padding: 15px;
-   transition: var(--hover);
-
-   @media (any-hover: hover) {
-      &:hover {
-         cursor: pointer;
-         background: rgba(0, 0, 0, .1);
-         transition: var(--hover);
-      }
-   }
 }
 
 .eventName {
@@ -75,23 +34,13 @@
 }
 
 .eventTime {
-   
    width: 50%;
 }
 
-.searchForm {
+.isActive {
    display: flex;
-   align-items: center;
-   gap: 10px;
-   background: #fff;
-   padding: 10px;
-   border: 1px solid var(--grey);
-   border-radius: 5px;;
-}
-
-.searchInput {
-   display: block;
-   font-size: 18px;
+   justify-content: center;
+   width: 70px;
 }
 
 .create {
@@ -124,4 +73,26 @@
       width: 50%;
       color: var(--grey)
    }
+
+   .tableIsActive {
+      color: var(--grey);
+      flex-shrink: 0;
+      width: 70px;
+   }
+}
+
+.true,
+.false {
+   display: flex;
+   border-radius: 50%;
+}
+
+.true {
+   padding: 3px;
+   background: var(--green);
+}
+
+.false {
+   padding: 5px;
+   background: red;
 }

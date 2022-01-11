@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import { usePopUp, useQueryParams } from 'hooks';
+import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { useModal, useQueryParams } from 'hooks';
 import { Params } from 'hooks/useQueryParams';
-import { conditionClassName } from 'tools/functions';
+import { conditionClass } from 'tools/functions';
 import s from './FiltersForm.module.scss';
-import { BodyBlur } from 'components/common';
-import { CategoriesLabel, CategoriesSelection } from 'components/common/select-categories/SelectCategories';
+import { OpenWithBodyBlur } from 'components/common';
+import SelectCategories from 'components/common/select-categories/SelectCategories';
 import { Cross } from 'icons';
 
 
@@ -14,8 +14,6 @@ type PropsType = {
    isOpened: boolean
    close: () => void
    filtersRef: React.RefObject<HTMLDivElement>
-   categories: PopularCategory[]
-   isLoading: boolean
    setFilters: React.Dispatch<React.SetStateAction<CalalogEventFilters>>
 }
 
@@ -24,47 +22,49 @@ type FormValues = {
    availablePlaces: string
    onlyFree: boolean
    maxPrice: string
+   categories: number[]
 }
 
 const FiltersForm: React.FC<PropsType> = (props) => {
-   const [areCategoriesOpened, setAreCategoriesOpened, categoriesRef] = usePopUp<HTMLDivElement>();
+   const [
+      areCategoriesOpened,
+      setAreCategoriesOpened,
+      categoriesRef
+   ] = useModal<HTMLDivElement>();
 
-   const { getParam, updateParams } = useQueryParams<Omit<FilterQueryParams, 'search'>>();
-   const queryParams = {
+   const { getParam, updateParams } = useQueryParams<Omit<CalalogQueryParams, 'search'>>();
+   const queryParams: FormValues = {
       peopleRequired: getParam('peopleRequired'),
       availablePlaces: getParam('availablePlaces'),
       onlyFree:  getParam('onlyFree', Params.BOOLEAN),
       maxPrice: getParam('maxPrice'),
+      categories: getParam('categories', Params.ARRAY).map(id => Number(id))
    };
 
-   const [formFilters, setFormFilters] = useState<Omit<CalalogEventFilters, 'categories' | 'search'>>(queryParams);
-   const [selectedCategories, setSelectedCategories] = useState<number[]>(
-      getParam('categories', Params.ARRAY).map(id => Number(id))
-   );
+   const [
+      formFilters,
+      setFormFilters
+   ] = useState<Omit<CalalogEventFilters, 'categories' | 'search'>>(queryParams);
 
-   const formik = useFormik<FormValues>({
-      initialValues: queryParams,
-      onSubmit: (formData, { setSubmitting }) => {
-         setSubmitting(false)
-         setFormFilters({ ...formData })
-         updateParams({
-            ...formData,
-            onlyFree:  formData.onlyFree ? formData.onlyFree : '',
-            categories: selectedCategories,
-         })
-         props.close()
-      },
-   });
+   const handleSubmit = (formData: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
+      setSubmitting(false)
+      setFormFilters({ ...formData })
+      updateParams({
+         ...formData,
+         onlyFree:  formData.onlyFree ? formData.onlyFree : '',
+      })
+      props.close()
+   }
 
-   const handleReset = () => {
-      formik.setValues({
+   const handleReset = (values: FormValues, { setValues }: FormikHelpers<FormValues>) => {
+      setValues({
          availablePlaces: '',
          maxPrice: '',
          onlyFree: false,
          peopleRequired: '',
+         categories: [],
       })
 
-      setSelectedCategories([])
       setFormFilters({
          availablePlaces: '',
          maxPrice: '',
@@ -87,90 +87,81 @@ const FiltersForm: React.FC<PropsType> = (props) => {
       props.setFilters(prev => ({
          ...prev,
          ...formFilters,
-         categories: selectedCategories,
       }))
    }, [formFilters]);
-   
+
    return (
-      <BodyBlur blurFlag={props.isOpened}>
+      <OpenWithBodyBlur flag={props.isOpened}>
          <div
             ref={props.filtersRef}
-            className={conditionClassName(`${s.body} ${s.filterBody}`, props.isOpened, s.opened)}
+            className={conditionClass(`${s.body} ${s.filterBody}`, props.isOpened, s.opened)}
          >
             <h3 className={s.heading}>Search event filters</h3>
             <button onClick={props.close} className={s.cross}>
                <Cross isHover size={17}  />
             </button>
-            <form onSubmit={formik.handleSubmit} className={s.form}>
-               <CategoriesLabel
-                  onClick={() => setAreCategoriesOpened(true)}
-                  selectedCategories={selectedCategories}
-                  categories={props.categories}
-               />
-               <label className={s.filterField}>
-                  People needed for event
-                  <input
-                     autoComplete='off'
-                     type='number'
-                     name='peopleRequired'
-                     id='peopleRequired'
-                     className={s.input}
-                     onChange={formik.handleChange}
-                     value={formik.values.peopleRequired}
+            <Formik
+               initialValues={queryParams}
+               onSubmit={handleSubmit}
+               onReset={handleReset}
+            >
+               {({ isSubmitting }) => (
+               <Form autoComplete='off' className={s.form}>
+                  <SelectCategories
+                     as='aside'
+                     isOpened={areCategoriesOpened}
+                     setIsOpened={setAreCategoriesOpened}
+                     modalRef={categoriesRef}
+                     styles={{
+                        padding: '10px 5px',
+                        margin: '0 -5px',
+                     }}
                   />
-               </label>
-               <label className={s.filterField}>
-                  Available places left
-                  <input
-                     autoComplete='off'
-                     type='number'
-                     name='availablePlaces'
-                     id='availablePlaces'
-                     className={s.input}
-                     onChange={formik.handleChange}
-                     value={formik.values.availablePlaces}
-                  />
-               </label>
-               <label className={`${s.filterField} ${s.filterCheckbox}`}>
-                  <input
-                     autoComplete='off'
-                     type='checkbox'
-                     name='onlyFree'
-                     id='onlyFree'
-                     className={s.input}
-                     onChange={(e) => formik.setFieldValue('onlyFree', e.target.checked)}
-                     checked={formik.values.onlyFree}
-                  />
-                  Show only free
-               </label>
-               <label className={s.filterField}>
-                  Maximum price
-                  <input
-                     autoComplete='off'
-                     type='number'
-                     name='maxPrice'
-                     id='maxPrice'
-                     className={s.input}
-                     onChange={formik.handleChange}
-                     value={formik.values.maxPrice}
-                  />
-               </label>
-               <div className={s.buttons}>
-                  <button className={s.reset} onClick={handleReset} type='reset'>Reset</button>
-                  <button className={s.apply} disabled={formik.isSubmitting} type='submit'>Apply</button>
-               </div>
-            </form>
-            <CategoriesSelection
-               isOpened={areCategoriesOpened}
-               close={() => setAreCategoriesOpened(false)}
-               categoriesRef={categoriesRef}
-               selectedCategories={selectedCategories}
-               setSelectedCategories={setSelectedCategories}
-               categories={props.categories}
-               isLoading={props.isLoading}
-            />
+                  <label className={s.filterField}>
+                     People needed for event
+                     <Field
+                        type='number'
+                        name='peopleRequired'
+                        className={s.input}
+                     />
+                  </label>
+                  <label className={s.filterField}>
+                     Available places left
+                     <Field
+                        type='number'
+                        name='availablePlaces'
+                        className={s.input}
+                     />
+                  </label>
+                  <label className={`${s.filterField} ${s.filterCheckbox}`}>
+                     <Field
+                        type='checkbox'
+                        name='onlyFree'
+                        className={s.input}
+                     />
+                     Show only free
+                  </label>
+                  <label className={s.filterField}>
+                     Maximum price
+                     <Field
+                        type='number'
+                        name='maxPrice'
+                        className={s.input}
+                     />
+                  </label>
+                  <div className={s.buttons}>
+                     <button className={`${s.reset} greyOnInteract`} type='reset'>
+                        Reset
+                     </button>
+                     <button className={s.apply} disabled={isSubmitting} type='submit'>
+                        Apply
+                     </button>
+                  </div>
+               </Form>
+               )}
+            </Formik>
          </div>
-      </BodyBlur>
+      </OpenWithBodyBlur>
    );
 }
 

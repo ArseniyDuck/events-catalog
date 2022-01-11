@@ -1,27 +1,41 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, Update } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
-import { history } from 'app-routing';
 import AuthService from 'services/AuthService';
+import eventsApi from './eventsApi';
 
 
 type initialStateType = {
    user: User
    signUpErrors: string[]
-};
+   isFetching: boolean
+}
 
-const intialUser = {
+const intialUser: User = {
    id: null,
    username: '',
    fullname: '',
    phone_number: '',
    photo: null,
+   is_profile_notification_shown: false
 }
 
 const initialState: initialStateType = {
    user: intialUser,
    signUpErrors: [],
-
+   isFetching: false
 };
+
+export const deleteNotification = createAsyncThunk(
+   'auth/deleteNotification',
+   async (_, thunkAPI) => {
+      try {
+         await AuthService.hideNotification()
+      } catch (error) {
+         const err = error as AxiosError;
+         return thunkAPI.rejectWithValue(err.message);
+      }
+   }
+)
 
 export const signIn = createAsyncThunk(
    'auth/signIn',
@@ -31,7 +45,6 @@ export const signIn = createAsyncThunk(
          localStorage.setItem('accessToken', access)
          localStorage.setItem('refreshToken', refresh);
          thunkAPI.dispatch(me());
-         history.push('/');
       } catch (error) {
          const err = error as AxiosError;
          return thunkAPI.rejectWithValue(err.message);
@@ -78,6 +91,19 @@ export const me = createAsyncThunk(
    }
 )
 
+export const updateProfile = createAsyncThunk(
+   'auth/updateProfile',
+   async (userData: UpdateUser, thunkAPI) => {
+      try {
+         const { data: user } = await AuthService.updateProfile(userData)
+         return user
+      } catch (error) {
+         const err = error as AxiosError;
+         return thunkAPI.rejectWithValue(err.message);
+      }
+   }
+)
+
 export const authSlice = createSlice({
    name: 'auth',
    initialState,
@@ -85,7 +111,6 @@ export const authSlice = createSlice({
       setUser(state, action) {
          state.user = action.payload
       },
-      // todo: clear all reducer, not only user info
       logout(state) {
          state.user = intialUser
          localStorage.removeItem('accessToken')
@@ -95,7 +120,46 @@ export const authSlice = createSlice({
          state.signUpErrors = action.payload
       }
    },
+   extraReducers: (builder) => {
+      // deleteNotification ---------------------------------
+      builder.addCase(deleteNotification.pending, (state => {
+         state.isFetching = true
+      }))
+
+      builder.addCase(deleteNotification.fulfilled, (state => {
+         state.user.is_profile_notification_shown = false
+         state.isFetching = false
+      }))
+
+      builder.addCase(deleteNotification.rejected, (state => {
+         state.isFetching = false
+      }))
+
+      // updateProfile ---------------------------------
+      builder.addCase(updateProfile.pending, (state => {
+         state.isFetching = true
+      }))
+
+      builder.addCase(updateProfile.fulfilled, ((state, action) => {
+         state.user = action.payload
+         state.isFetching = false
+      }))
+
+      builder.addCase(updateProfile.rejected, (state => {
+         state.isFetching = false
+      }))
+
+      // createEvent ---------------------------------
+      builder.addMatcher(
+         eventsApi.endpoints.createEvent.matchFulfilled,
+         (state, action) => {
+            
+         }
+      )
+   }
 });
+
+
 
 export default authSlice.reducer;
 export const { setUser, logout, setErrors } = authSlice.actions;

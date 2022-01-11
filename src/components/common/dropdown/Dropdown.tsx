@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { conditionClassName } from 'tools/functions';
-import { useDisableScroll, usePopUp } from 'hooks';
+import { conditionClass } from 'tools/functions';
+import { useDisableScroll, useModal } from 'hooks';
 import s from './Dropdown.module.scss';
 
 
@@ -11,10 +11,11 @@ type PropsType = {
    dropdownStyles?: React.CSSProperties
    isOverflow?: boolean
    trackVerticalPosition?: boolean
+   closeOnBody?: boolean
 }
 
 export const Dropdown: React.FC<PropsType> = (props) => {
-   const [isOpened, setIsOpened, dropdownRef] = usePopUp<HTMLDivElement>();
+   const [isOpened, setIsOpened, dropdownBodyRef] = useModal<HTMLDivElement>();
    useDisableScroll(isOpened);
    const labelRef = useRef<HTMLButtonElement>(null);
 
@@ -23,11 +24,11 @@ export const Dropdown: React.FC<PropsType> = (props) => {
 
    const calculateAndSetMaxHeight = useCallback(() => {
       if (isTopPositioned) {
-         setMaxHeight(dropdownRef.current?.getBoundingClientRect().bottom as number);
+         setMaxHeight(dropdownBodyRef.current?.getBoundingClientRect().bottom as number);
       } else {
-         setMaxHeight(window.innerHeight - Math.abs(dropdownRef.current?.getBoundingClientRect().top as number));
+         setMaxHeight(window.innerHeight - Math.abs(dropdownBodyRef.current?.getBoundingClientRect().top as number));
       }
-   }, [isTopPositioned, setMaxHeight, dropdownRef]);
+   }, [isTopPositioned, setMaxHeight, dropdownBodyRef]);
 
    // sync maxHeight
    useEffect(() => {
@@ -56,7 +57,6 @@ export const Dropdown: React.FC<PropsType> = (props) => {
       hoverEventListener.onMouseEnter = eventCallbackCreator();
    }
    
-   // use CSS to set position of dropdown
    let dropdownBodyClassName = s.dropdownBody;
    if (props.showOn === 'click') {
       dropdownBodyClassName += ` ${s.clickIsEnabled}`
@@ -78,7 +78,7 @@ export const Dropdown: React.FC<PropsType> = (props) => {
    }
 
    return <>
-      <div className={conditionClassName(s.dropdown, props.showOn === 'hover', s.hoverIsEnabled)}>
+      <div className={conditionClass(s.dropdown, props.showOn === 'hover', s.hoverIsEnabled)}>
          {/* Label element */}
          <button onClick={toggleDropdownState} {...hoverEventListener} className={s.label} ref={labelRef}>
             {props.label}
@@ -86,7 +86,8 @@ export const Dropdown: React.FC<PropsType> = (props) => {
 
          {/* Dropdown element */}
          <div
-            ref={dropdownRef}
+            ref={dropdownBodyRef}
+            onClick={() => props.closeOnBody && setIsOpened(false)}
             className={dropdownBodyClassName}
             style={{
                maxHeight: props.isOverflow ? maxHeight : 'auto',

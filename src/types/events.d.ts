@@ -33,19 +33,6 @@ type PopularCategory = Category & {
    is_popular: boolean
 }
 
-type CalalogEventFilters = {
-   search: string
-   maxPrice: string
-   peopleRequired: string
-   availablePlaces: string
-   onlyFree: boolean
-   categories: number[]
-}
-
-type FilterQueryParams = {
-   [k in keyof CalalogEventFilters]?: boolean | string | number[]
-}
-
 type SmallCategory = {
    id: number
    name: string

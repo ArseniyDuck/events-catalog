@@ -2,21 +2,16 @@
    display: flex;
    align-items: center;
    gap: 10px;
-   margin: 0 -5px;
-   padding: 10px 5px;
-   margin-top: 20px;
-   transition: var(--hover);
+   padding: 10px;
+   flex-grow: 1;
+
+   &.error {
+      background: rgba(255, 0, 0, .1);
+      border-color: red !important;
+   }
 
    .labelName {
       flex-grow: 1;
-   }
-
-   @media (any-hover: hover) {
-      &:hover {
-         cursor: pointer;
-         background: rgba(0, 0, 0, .1);
-         transition: var(--hover);
-      }
    }
 }
 
@@ -35,26 +30,7 @@
 }
 
 .heading {
-   font-size: 30px;
-}
-
-.body {
-   position: fixed;
-   width: 450px;
-   height: 100vh;
-   box-sizing: border-box;
-   padding: 20px 30px;
-   background: #fff;
-   transition: var(--side-move);
-   overflow-y: auto;
-
-   top: 0;
-   right: -100%;
-
-   &.opened {
-      right: 0;
-      transition: var(--side-move);
-   }
+   font-size: 22px;
 }
 
 .selectionHeader {
@@ -66,12 +42,14 @@
 .backToFilters {
    display: flex;
    align-items: center;
-   gap: 10px;
+   gap: 5px;
 }
 
 .resetCategories {
-   font-size: 18px;
-   color: var(--grey)
+   font-size: 16px;
+   padding: 3px 10px;
+   border: 1px solid black;
+   border-radius: 5px;
 }
 
 .incentive {
@@ -95,5 +73,36 @@
    input {
       width: 20px;
       height: 20px;
+   }
+}
+
+
+
+
+.categoriesModal {
+   width: 400px;
+   padding: 20px;
+   background: #fff;
+   max-height: 450px;
+   overflow: auto;
+}
+
+.categoriesSide {
+   position: fixed;
+   width: 450px;
+   height: 100vh;
+   box-sizing: border-box;
+   padding: 20px 30px;
+   background: #fff;
+   transition: var(--side-move);
+   overflow-y: auto;
+
+   top: 0;
+   right: -100%;
+
+   &.opened {
+      right: 0;
+      transition: var(--side-move);
+      z-index: 1;
    }
 }

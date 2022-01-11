@@ -1,0 +1,51 @@
+@import '../../styles/mixins';
+
+.row {
+   display: flex;
+   gap: 15px;
+
+   & + & {
+      margin-top: 15px;
+   }
+}
+
+.field {
+   position: relative;
+   flex-grow: 1;
+
+   .input {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border: 1px solid var(--grey);
+
+      &.error {
+         background: rgba(255, 0, 0, .1);
+         border-color: red;
+      }
+
+      &:focus + .label {
+         @include visible-element();
+      }
+   }
+
+   textarea.input {
+      height: 100px;
+   }
+}
+
+.label {
+   display: inline-block;
+   position: absolute;
+   font-size: 14px;
+   top: -10px;
+   left: 10px;
+   color: var(--grey);
+   background: #fff;
+   @include hidden-element();
+}
+
+.error {
+   color: red;
+}

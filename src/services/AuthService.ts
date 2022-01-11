@@ -8,7 +8,7 @@ export default class AuthService {
    }
    
    static async signIn(user: RegistrationUser): Promise<AxiosResponse<JWTTokens>> {
-      return $api.post('token/obtain/', { ...user });
+      return $api.post('token/obtain/', user);
    }
 
    static async refresh(): Promise<AxiosResponse<JWTTokens>> {
@@ -16,6 +16,14 @@ export default class AuthService {
    }
 
    static async signUp(user: SignUpUser): Promise<AxiosResponse<void>> {
-      return $api.post('register/', { ...user });
+      return $api.post('register/', user);
+   }
+
+   static async hideNotification(): Promise<AxiosResponse<void>> {
+      return $api.delete('notification/')
+   }
+
+   static async updateProfile(user: UpdateUser): Promise<AxiosResponse<User>> {
+      return $api.patch('me/update/', user)
    }
 };

@@ -26,6 +26,7 @@
 
 .heading {
    font-size: 30px;
+   margin-bottom: 20px;
 }
 
 .cross {
@@ -68,14 +69,7 @@
    display: flex;
    width: 450px;
    height: 50px;
-   transition: var(--hover);
-
-   @media (any-hover: hover) {
-      &:hover {
-         background: var(--bright-main-color);
-         transition: var(--hover);
-      }
-   }
+   background: #fff;
 }
 
 .reset,
@@ -84,31 +78,39 @@
    font-size: 22px;
    transition: var(--hover);
 
-   @media (any-hover: hover) {
-      &:hover {
-         transition: var(--hover);
-      }
-   }
-
    &.apply {
       background: var(--main-color);
       color: #fff;
+      transition: var(--hover);
 
       @media (any-hover: hover) {
          &:hover {
             background: var(--bright-main-color);
+            transition: var(--hover);
          }
       }
    }
+
    &.reset {
-      background: #e1e1e1;
-
-      @media (any-hover: hover) {
-         &:hover {
-            background: #d3d3d3;
-         }
-      }
+      border-top: 1px solid var(--grey);
    }
+}
 
-   
+.side {
+   position: fixed;
+   width: 450px;
+   height: 100vh;
+   box-sizing: border-box;
+   padding: 20px 30px;
+   background: #fff;
+   transition: var(--side-move);
+   overflow-y: auto;
+
+   top: 0;
+   right: -100%;
+
+   &.opened {
+      right: 0;
+      transition: var(--side-move); 
+   }
 }

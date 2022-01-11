@@ -1,0 +1,65 @@
+.notification {
+   margin-top: 30px;
+   display: inline-flex;
+   border-bottom: 1px solid transparent;
+   align-items: center;
+   gap: 5px;
+
+   .description {
+      font-size: 20px;
+   }
+
+   .information {
+      display: flex;
+      width: 17px;
+      height: 17px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      color: var(--main-color);
+      border: 2px solid var(--main-color);
+
+      &:hover {
+         cursor: pointer;
+      }
+   }
+}
+
+.modalButtons {
+   display: flex;
+   align-items: center;
+
+   .closeNotificationModal,
+   .neverShow {
+      display: inline-block;
+      width: 50%;
+      padding: 10px;
+      font-size: 16px;
+   }
+
+   .closeNotificationModal {
+      border: 1px solid var(--grey);
+      transition: var(--hover);
+      
+      @media (any-hover: hover) {
+         &:hover {
+            background: rgba(0, 0, 0, .1);
+            transition: var(--hover);
+         }
+      }
+   }
+
+   .neverShow {
+      border: 1px solid var(--main-color);
+      background: var(--main-color);
+      color: #fff;
+      transition: var(--hover);
+
+      @media (any-hover: hover) {
+         &:hover {
+            background: var(--bright-main-color);
+            transition: var(--hover);
+         }
+      }
+   }
+}

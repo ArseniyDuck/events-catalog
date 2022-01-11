@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
-import { useQueryParams } from 'hooks';
+import { useAppSelector, useModal, useQueryParams } from 'hooks';
 import s from './Header.module.scss';
 import { Container } from 'components/common';
 import { Cross, Search } from 'icons';
-import CreationButton from 'components/creation-button/CreationButton';
 import { RouteLinks } from 'app-routing';
 import { Link } from 'react-router-dom';
+import { imageUrl } from 'tools/functions';
+import EventCreation from 'components/event-creation/EventCreation';
 
 
 type PropsType = {
    setSearch: (search: string) => void
+   openCreation: () => void
 }
 
 type FormValues = { term: string }
 
 const Header: React.FC<PropsType> = (props) => {
+   const { photo } = useAppSelector(state => state.auth.user)
+
    const { getParam, updateParams } = useQueryParams<Pick<CalalogEventFilters, 'search'>>()
    const [searchTerm, setSearchTerm] = useState(getParam('search'))
 
@@ -35,6 +39,10 @@ const Header: React.FC<PropsType> = (props) => {
       setSearchTerm('')
       updateParams({search: ''})
    }
+
+   useEffect(() => {
+      props.setSearch(searchTerm)
+   }, [searchTerm]);
 
    return (
       <header className={s.header}>
@@ -58,9 +66,13 @@ const Header: React.FC<PropsType> = (props) => {
                   </button>
                )}
             </form>
-            <CreationButton text='Create' />
+            <button onClick={props.openCreation} className={s.create}>
+               Create
+            </button>
             <Link to={RouteLinks.PROFILE}>
-               <div className={`${s.avatar} ibg`}></div>
+               <div className={`${s.avatar} ibg`}>
+                  {photo && <img src={imageUrl(photo)} alt='avatar' /> }
+               </div>
             </Link>
          </Container>
       </header>

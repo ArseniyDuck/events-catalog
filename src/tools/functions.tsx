@@ -4,7 +4,7 @@ import { RouteType } from 'app-routing';
 import { API_URL, monthNames } from './variables';
 
 
-export function conditionClassName(initialClassName: string, condition: Boolean, optionalClassName: string) {
+export function conditionClass(initialClassName: string, condition: boolean, optionalClassName: string) {
    if (condition) {
       return `${initialClassName} ${optionalClassName}`
    } else {
@@ -12,7 +12,7 @@ export function conditionClassName(initialClassName: string, condition: Boolean,
    }
 }
 
-export function getArrayOfComponents(Component: React.ComponentType, count: number) {
+export function componentList(Component: React.ComponentType, count: number) {
    const components = []
 
    for (let i = 0; i < count; i++) {
@@ -115,4 +115,20 @@ export function getHighlightedText(text: string, highlight: string, highlightSty
          );
       })}
    </>;
+}
+
+export function requiredFields<T extends {[k: string]: string}>(
+   values: {[k in keyof T]: string},
+   ...fields: (keyof T)[]
+): {}
+export function requiredFields(values: {}, ...fields: []) {
+   return fields.reduce((errors, field) => {
+      if (!values[field]) {
+         return {
+            ...errors,
+            [field]: 'This field is required!'
+         }
+      }
+      return errors
+   }, {});
 }

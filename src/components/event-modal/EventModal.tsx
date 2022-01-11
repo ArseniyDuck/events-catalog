@@ -1,21 +1,21 @@
 import Category from 'components/category/Category';
-import { BodyBlur } from 'components/common';
+import { OpenWithBodyBlur } from 'components/common';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { conditionClassName } from 'tools/functions';
-import s from './EventPopUp.module.scss';
+import { conditionClass } from 'tools/functions';
+import s from './EventModal.module.scss';
 
 type PropsType = {
    isOpened: boolean
    close: () => void
-   popUpRef: React.RefObject<HTMLDivElement>
+   innerRef: React.RefObject<HTMLDivElement>
    event: CatalogEvent
 };
 
-const EventPopUp: React.FC<PropsType> = (props) => {
+const EventModal: React.FC<PropsType> = (props) => {
    return (
-      <BodyBlur isHoverTransition blurFlag={props.isOpened}>
-         <div ref={props.popUpRef} className={conditionClassName(s.wrapper, props.isOpened, s.opened)}>
+      <OpenWithBodyBlur isHoverTransition flag={props.isOpened}>
+         <div ref={props.innerRef} className={conditionClass(s.wrapper, props.isOpened, s.opened)}>
             <p className={s.heading}>{props.event.name}</p>
             <time className={s.time}>{props.event.time}</time>
             <p className={s.description}>{props.event.description}</p>
@@ -57,8 +57,8 @@ const EventPopUp: React.FC<PropsType> = (props) => {
                </div>
             </div>
          </div>
-      </BodyBlur>
+      </OpenWithBodyBlur>
    );
 };
 
-export default EventPopUp;
+export default EventModal;

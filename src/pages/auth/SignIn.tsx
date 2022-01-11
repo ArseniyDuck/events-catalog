@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Field, Form, Formik, FormikErrors, FormikHelpers } from 'formik';
-import { signIn } from '../../redux/auth-reducer';
-import { useAppDispatch, useInputType } from '../../hooks';
+import { signIn } from 'redux/auth-reducer';
+import { useAppDispatch, useInputType } from 'hooks';
 import a from './Auth.module.scss';
 import { Eye } from 'icons';
 import { RouteLinks } from 'app-routing';
@@ -82,7 +82,9 @@ const SignInForm = () => {
                   placeholder='Enter password:'
                />
                <label className={a.label} htmlFor='signIn__password'>Password</label>
-               <span className={a.eye} onClick={handleEyeClick}><Eye size={20} fillColor='#fff' /></span>
+               <span className={a.eye} onClick={handleEyeClick}>
+                  <Eye size={20} fillColor='#fff' />
+               </span>
                {errors.password && touched.password ? (
                   <div className={a.fieldError}>{errors.password}</div>
                ) : null}

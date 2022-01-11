@@ -1,8 +1,8 @@
 import React from 'react';
 import s from './Card.module.scss';
 import { Container, TransitionSkeleton } from 'components/common';
-import { usePopUp } from 'hooks';
-import EventPopUp from 'components/event-pop-up/EventPopUp';
+import { useModal } from 'hooks';
+import EventModal from 'components/event-modal/EventModal';
 import Category from 'components/category/Category';
 import { timeToString } from 'tools/functions';
 
@@ -10,7 +10,7 @@ import { timeToString } from 'tools/functions';
 type PropsType = CatalogEvent
 
 const EventCard: React.FC<PropsType> = (props) => {
-   const [isOpened, setIsOpened, popUpRef] = usePopUp<HTMLDivElement>();
+   const [isOpened, setIsOpened, ref] = useModal<HTMLDivElement>();
 
    return <>
       <div className={s.card} onClick={() => setIsOpened(true)}>
@@ -36,10 +36,10 @@ const EventCard: React.FC<PropsType> = (props) => {
             ))}
          </div>
       </div>
-      <EventPopUp
+      <EventModal
          isOpened={isOpened}
          close={() => setIsOpened(false)}
-         popUpRef={popUpRef}
+         innerRef={ref}
          event={{
             ...props,
             time: timeToString(props.time)

@@ -1,5 +1,5 @@
 import React from 'react';
-import { conditionClassName } from 'tools/functions';
+import { conditionClass } from 'tools/functions';
 import s from './Container.module.scss';
 
 type PropsType = {
@@ -8,7 +8,7 @@ type PropsType = {
 
 const Container: React.FC<PropsType> = (props) => {
    return (
-      <div className={conditionClassName('container', !!props.className, props.className as string)}>
+      <div className={conditionClass('container', !!props.className, props.className as string)}>
          {props.children}
       </div>
    );

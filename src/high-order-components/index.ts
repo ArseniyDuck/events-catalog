@@ -1,5 +1,7 @@
 import withIcon from './withIcon/withIcon';
 import { WrappedIconType } from './withIcon/withIcon';
 
-export { withIcon }
+import withField from './withField/withField';
+
+export { withIcon, withField }
 export type { WrappedIconType }

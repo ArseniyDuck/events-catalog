@@ -1,73 +1,116 @@
-import React, { useEffect, useState } from 'react';
-import { getHighlightedText, imageUrl, phoneNumber, timeToString } from 'tools/functions';
+import React, { useState } from 'react';
+import { componentList, getHighlightedText, phoneNumber, timeToString } from 'tools/functions';
 import s from './Profile.module.scss';
-import { Container, Dropdown } from 'components/common';
-import { Cross, Dots, Search } from 'icons';
-import { useAppDispatch, useAppSelector, useDebounce, useQueryParams } from 'hooks';
+import { Container, Dropdown, TransitionSkeleton } from 'components/common';
+import { Cross, Dots, Spinner } from 'icons';
+import { useAppDispatch, useAppSelector, useDebounce, useQueryParams, useModal } from 'hooks';
 import { logout } from 'redux/auth-reducer';
-import { history, RouteLinks } from 'app-routing';
-import { useGetUserEventsQuery } from 'redux/eventsApi';
-import { useFormik } from 'formik';
+import { RouteLinks } from 'app-routing';
+import { useGetCategoriesQuery, useGetUserEventsQuery } from 'redux/eventsApi';
+import { useNavigate } from 'react-router';
+import ProfileNotification from 'components/profile-notification/ProfileNotification'
+import ProfileSearch from 'components/profile-search/ProfileSearch';
+import Banner from 'components/banner/Banner';
+import EditProfile from 'components/edit-profile/EditProfile';
+import EventCreation from 'components/event-creation/EventCreation';
+import SuccessMark from 'icons/succuss-mark/SuccessMark';
 
+
+// todo: check and fix all animations
 
 type PropsType = {};
 
 const Profile: React.FC<PropsType> = (props) => {
-   const user = useAppSelector(state => state.auth.user)
-   const dispatch = useAppDispatch()
+   const [isCreationOpened, setIsCreationOpened, creationRef] = useModal<HTMLDivElement>()
+   const [isEditOpened, setIsEditOpened, editRef] = useModal<HTMLDivElement>()
 
-   const {getParam} = useQueryParams<SearchUserEvents>()
+   const navigate = useNavigate()
+   
+   const dispatch = useAppDispatch()
+   const user = useAppSelector(state => state.auth.user)
+
+   const { getParam } = useQueryParams<ProfileQueryParams>()
    const [searchEventTerm, setSearchEventTerm] = useState(getParam('search'));
    const debouncedSearchTerm = useDebounce(searchEventTerm, 300)
 
-   const { data: events=[], isLoading: isLoadingEvents } = useGetUserEventsQuery(debouncedSearchTerm)
+   const {
+      data: events=[],
+      isLoading: isLoadingEvents
+   } = useGetUserEventsQuery(debouncedSearchTerm);
 
-   const handleLogoutClick = () => {
+   const {data: categories=[], isLoading: isLoadingCategories} = useGetCategoriesQuery();
+
+   const handleLogout = () => {
       dispatch(logout())
-      history.push(RouteLinks.SIGN_IN)
+      navigate(RouteLinks.SIGN_IN)
    }
-   
+
+   const handleCretionOpen = () => {
+      setIsCreationOpened(true)
+   }
+
+   const handleCretionClose = () => {
+      setIsCreationOpened(false)
+   }
+
+   const handleEditOpen = () => {
+      setIsEditOpened(true)
+   }
+
+   const handleEditClose = () => {
+      setIsEditOpened(false)
+   }
+
+   const isLoading = useAppSelector(state => state.auth.isFetching)
+
    return (
       <Container className={s.container}>
-         <div className={s.banner}>
-            <div className={`${s.avatar} ibg`}>
-               {user.photo && <img src={imageUrl(user.photo)} alt='avatar' />}
-            </div>
-            <div className={s.profileData}>
-               <h1 className={s.fullname}>{user.fullname}</h1>
-               <div className={s.userdata}>
-                  <span>{phoneNumber(user.phone_number)}</span>
-               </div>
-            </div>
-         </div>
+         {/* todo: don't use condition like this */}
+         {user.fullname && (
+            <EditProfile
+               isOpened={isEditOpened}
+               close={handleEditClose}
+               innerRef={editRef}
+            />
+         )}
+         <EventCreation
+            isOpened={isCreationOpened}
+            close={handleCretionClose}
+            innerRef={creationRef}
+         />
+         <Banner
+            photo={user.photo}
+            title={user.fullname}
+            subtitle={phoneNumber(user.phone_number)}
+         />
+         {/* todo: don't forget about Notification while creating adaptive layout */}
+         {user.is_profile_notification_shown && (
+            <ProfileNotification />
+         )}
          <div className={s.options}>
-            <SearchEvent setSearchEventTerm={setSearchEventTerm} />
-            <button className={s.create}>
+            <ProfileSearch setSearch={setSearchEventTerm} />
+            <button onClick={handleCretionOpen} className={s.create}>
                Create event
             </button>
-            <Dropdown
-               showOn='click'
-               initialPosition='top'
-               dropdownStyles={{
-                  background: '#fff',
-                  transform: 'translate(calc(100% - 25px), 5px)'
-               }}
-               label={
-                  <Dots size={25} color='#000' />
-               }
-            >
-               <button className={s.option}>Edit profile</button>
-               <button onClick={handleLogoutClick} className={s.option}>Logout</button>
-            </Dropdown>
+            <ProfileDropdown>
+               <ProfileAction
+                  text='Edit profile'
+                  onClick={handleEditOpen}
+               />
+               <ProfileAction
+                  text='Logout'
+                  onClick={handleLogout}
+               />
+            </ProfileDropdown>
+            {isLoading && (
+               <Spinner size={20} />
+            )}
          </div>
          <div className={s.content}>
-            <div className={s.tableHeading}>
-               <span className={s.tableTitle}>Title</span>
-               <span className={s.tableDate}>Date</span>
-            </div>
+            <TableHeading />
             <div className={s.events}>
                {isLoadingEvents
-                  ? 'Loading events...'
+                  ? componentList(RowEventSkeleton, 10)
                   : events.map(event => (
                      <RowEvent
                         key={event.id}
@@ -83,73 +126,64 @@ const Profile: React.FC<PropsType> = (props) => {
 };
 
 
-type FormValues = {
-   term: string
-}
 
-type SearchUserEvents = {
-   search: string
-}
 
-type SearchEventProps = {
-   setSearchEventTerm: React.Dispatch<React.SetStateAction<string>>
-}
-
-const SearchEvent: React.FC<SearchEventProps> = (props) => {
-   const { getParam, updateParams } = useQueryParams<SearchUserEvents>()
-
-   const formik = useFormik<FormValues>({
-      initialValues: {
-         term: getParam('search')
-      },
-      onSubmit: (formData, { setSubmitting }) => {
-         setSubmitting(false)
-      }
-   })
-
-   const handleReset = () => {
-      formik.setFieldValue('term', '')
-      props.setSearchEventTerm('')
-      updateParams({search: ''})
-   }
-
-   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value
-
-      formik.setFieldValue('term', value)
-      props.setSearchEventTerm(value)
-      updateParams({search: value})
-   }
-
+const ProfileDropdown: React.FC = (props) => {
    return (
-      <form className={s.searchForm} onSubmit={formik.handleSubmit}>
-         <button type='submit' disabled={formik.isSubmitting}>
-            <Search size={20} color='var(--grey)' />
-         </button>
-         <input
-            autoComplete='off'
-            type='text'
-            name='term'
-            placeholder='Search by title'
-            value={formik.values.term}
-            onChange={handleChange}
-            className={s.searchInput}
-         />
-         {formik.values.term && (
-            <button onClick={handleReset} type='reset'>
-               <Cross size={13} isHover />
-            </button>
-         )}
-      </form>
+      <Dropdown
+         showOn='click'
+         initialPosition='top'
+         closeOnBody
+         dropdownStyles={{
+            background: '#fff',
+            transform: 'translate(calc(100% - 25px), 5px)',
+         }}
+         label={
+            <Dots size={25} color='#000' />
+         }
+      >
+         {props.children}
+      </Dropdown>
    );
 }
+
+
+
+const TableHeading: React.FC = () => {
+   return (
+      <div className={s.tableHeading}>
+         <span className={s.tableTitle}>Title</span>
+         <span className={s.tableDate}>Date</span>
+         <span className={s.tableIsActive}>Is active</span> 
+      </div>
+   );
+}
+
+
+
+type ProfileActionProps = {
+   text: string
+   onClick: () => void
+}
+const ProfileAction: React.FC<ProfileActionProps> = (props) => {
+   return (
+      <button
+         onClick={props.onClick}
+         className={`${s.option} greyOnInteract`}
+      >
+         {props.text}
+      </button>
+   );
+}
+
+
 
 type RowEventProps = MyEvent & {
    searchTerm: string
 }
 const RowEvent: React.FC<RowEventProps> = (props) => {
    return (
-      <div className={s.eventRow}>
+      <div className={`${s.eventRow} greyOnInteract`}>
          <p className={s.eventName}>
             {getHighlightedText(props.name, props.searchTerm, {
                background: 'var(--main-color)',
@@ -157,6 +191,43 @@ const RowEvent: React.FC<RowEventProps> = (props) => {
             })}
          </p>
          <time dateTime={props.time} className={s.eventTime}>{timeToString(props.time)}</time>
+         <span className={s.isActive}>
+            {props.is_active
+               ? 
+                  <span className={s.true}>
+                     <SuccessMark size={13} color='#fff' />
+                  </span>
+   
+               : (
+                  <span className={s.false}>
+                     <Cross color='#fff' size={10} stroke={5} />
+                  </span>
+               )
+            }
+         </span>
+      </div>
+   );
+}
+
+
+const RowEventSkeleton: React.FC = (props) => {
+   return (
+      <div className={s.eventRow}>
+         <div className={s.eventName}>
+            <TransitionSkeleton width={250} height={20} />   
+         </div>
+         <div className={s.eventTime}>
+            <TransitionSkeleton width={150} height={16} />
+         </div>
+         <div className={s.isActive}>
+            <TransitionSkeleton
+               width={20}
+               height={20}
+               styles={{
+                  borderRadius: '50%'
+               }}
+            />
+         </div>
       </div>
    );
 }

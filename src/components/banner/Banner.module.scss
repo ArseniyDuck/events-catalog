@@ -1,0 +1,26 @@
+.banner {
+   display: flex;
+   align-items: flex-end;
+   gap: 20px;
+   padding-top: 50px;
+}
+
+.photo {
+   $size: 250px;
+   width: $size;
+   height: $size;
+   border-radius: 50%;
+   flex-shrink: 0;
+}
+
+.titlesContainer {
+   flex-grow: 1;
+}
+
+.title {
+   font-size: 70px;
+}
+
+.subtitle {
+   font-size: 20px;
+}

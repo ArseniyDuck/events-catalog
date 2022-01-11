@@ -36,7 +36,7 @@ const baseQueryWithReauth: BaseQueryFn<
       }
    }
    return result
- }
+}
 
 
 const eventsApi = createApi({
@@ -54,11 +54,17 @@ const eventsApi = createApi({
             categories: filter.categories,
          })}`
       }),
+
       getCategories: build.query<PopularCategory[], void>({
          query: () => `categories/`
       }),
+
       getUserEvents: build.query<MyEvent[], string>({
          query: (search: string) => `events/mine/?${generateQueryString({ search })}`
+      }),
+      
+      createEvent: build.mutation<CatalogEvent, void>({
+         query: () => `event/create/`, 
       })
    })
 })
