@@ -76,9 +76,6 @@
    }
 }
 
-
-
-
 .categoriesModal {
    width: 400px;
    padding: 20px;
@@ -106,3 +103,9 @@
       z-index: 1;
    }
 }
+
+.fieldError {
+   color: red;
+}
+
+// todo: delete redutant styles

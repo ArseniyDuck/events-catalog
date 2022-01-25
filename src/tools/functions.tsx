@@ -101,8 +101,12 @@ export function timeToString(time: string) {
    return `${month} ${dayNumber}, ${hours}:${minutes}`
 }
 
+function escapeRegex(string: string) {
+   return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
 export function getHighlightedText(text: string, highlight: string, highlightStyle: React.CSSProperties) {
-   const fragments = text.split(new RegExp(`(${highlight})`, 'gi'));
+   const fragments = text.split(new RegExp(`(${escapeRegex(highlight)})`, 'gi'));
    
    return <>
       {fragments.map((fragment, index) => {
@@ -132,3 +136,15 @@ export function requiredFields(values: {}, ...fields: []) {
       return errors
    }, {});
 }
+
+export function providesList<R extends { id: string | number }[], T extends string>(
+   resultsWithIds: R | undefined,
+   tagType: T
+ ) {
+   return resultsWithIds
+     ? [
+         { type: tagType, id: 'LIST' },
+         ...resultsWithIds.map(({ id }) => ({ type: tagType, id })),
+       ]
+     : [{ type: tagType, id: 'LIST' }]
+ }

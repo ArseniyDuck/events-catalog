@@ -44,7 +44,7 @@ const FiltersForm: React.FC<PropsType> = (props) => {
    const [
       formFilters,
       setFormFilters
-   ] = useState<Omit<CalalogEventFilters, 'categories' | 'search'>>(queryParams);
+   ] = useState<Omit<CalalogEventFilters, 'search'>>(queryParams);
 
    const handleSubmit = (formData: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
       setSubmitting(false)
@@ -56,7 +56,7 @@ const FiltersForm: React.FC<PropsType> = (props) => {
       props.close()
    }
 
-   const handleReset = (values: FormValues, { setValues }: FormikHelpers<FormValues>) => {
+   const handleReset = (values: FormValues, { setValues, setFieldValue, resetForm }: FormikHelpers<FormValues>) => {
       setValues({
          availablePlaces: '',
          maxPrice: '',
@@ -69,7 +69,8 @@ const FiltersForm: React.FC<PropsType> = (props) => {
          availablePlaces: '',
          maxPrice: '',
          onlyFree: false,
-         peopleRequired: ''
+         peopleRequired: '',
+         categories: [],
       })
 
       updateParams({
@@ -108,6 +109,7 @@ const FiltersForm: React.FC<PropsType> = (props) => {
                {({ isSubmitting }) => (
                <Form autoComplete='off' className={s.form}>
                   <SelectCategories
+                     emptyStateName='All'
                      as='aside'
                      isOpened={areCategoriesOpened}
                      setIsOpened={setAreCategoriesOpened}

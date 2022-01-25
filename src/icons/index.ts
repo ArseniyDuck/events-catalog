@@ -6,6 +6,7 @@ import Error from './error/Error'
 import Cross from './cross/Cross'
 import Dots from './dots/Dots'
 import Spinner from './spinner/Spinner';
+import SuccessMark from './succuss-mark/SuccessMark';
 
 export {
    Search,
@@ -16,4 +17,5 @@ export {
    Cross,
    Dots,
    Spinner,
+   SuccessMark,
 }

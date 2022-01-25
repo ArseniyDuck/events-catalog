@@ -81,6 +81,13 @@ export const signUp = createAsyncThunk(
 export const me = createAsyncThunk(
    'auth/me',
    async (_, thunkAPI) => {
+      /*
+         todo:
+         observe user.id in useEffect;
+         if user if logged in, then redirect them from RouteLinks.SIGN_IN to HomePage;
+         implement logout buttons that will log out user and redirect them to RouteLinks.SIGN_IN;
+      */
+
       try {
          const { data } = await AuthService.me();
          thunkAPI.dispatch(setUser(data));

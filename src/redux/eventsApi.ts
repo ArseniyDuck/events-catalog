@@ -1,7 +1,7 @@
 import $api from 'http-requests';
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { generateQueryString } from 'tools/functions';
+import { generateQueryString, providesList } from 'tools/functions';
 import { API_URL } from 'tools/variables';
 import { logout } from './auth-reducer';
  
@@ -42,6 +42,7 @@ const baseQueryWithReauth: BaseQueryFn<
 const eventsApi = createApi({
    reducerPath: 'eventsApi',
    baseQuery: baseQueryWithReauth,
+   tagTypes: ['Events', 'Categories', 'UserEvents'],
    endpoints: (build) => ({
       getEvents: build.query<CatalogEvent[], {sort?: string, filter: CalalogEventFilters}>({
          query: ({sort='', filter}) => `events/?${generateQueryString({
@@ -52,19 +53,35 @@ const eventsApi = createApi({
             available_places: filter.availablePlaces,
             only_free: filter.onlyFree,
             categories: filter.categories,
-         })}`
+         })}`,
+         providesTags: (result) => providesList(result, 'Events')
       }),
 
       getCategories: build.query<PopularCategory[], void>({
-         query: () => `categories/`
+         query: () => `categories/`,
+         providesTags: (result) => providesList(result, 'Categories')
       }),
 
       getUserEvents: build.query<MyEvent[], string>({
-         query: (search: string) => `events/mine/?${generateQueryString({ search })}`
+         query: (search: string) => `events/mine/?${generateQueryString({ search })}`,
+         providesTags: (result) => providesList(result, 'UserEvents')
       }),
       
-      createEvent: build.mutation<CatalogEvent, void>({
-         query: () => `event/create/`, 
+      createEvent: build.mutation<CatalogEvent, EventCreation>({
+         query: (body) => ({
+            url: `event/create/`,
+            method: 'POST',
+            body: {
+               name: body.name,
+               description: body.description,
+               time: body.time,
+               people_required: body.peopleRequired,
+               place: body.place,
+               categories: body.categories,
+               price: body.price || 0,
+            },
+         }),
+         invalidatesTags: [{ type: 'Events', id: 'LIST' }]
       })
    })
 })
@@ -74,4 +91,5 @@ export const {
    useGetEventsQuery,
    useGetCategoriesQuery,
    useGetUserEventsQuery,
+   useCreateEventMutation,
 } = eventsApi;

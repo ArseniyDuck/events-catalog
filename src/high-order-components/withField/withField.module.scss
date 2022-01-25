@@ -1,17 +1,12 @@
 @import '../../styles/mixins';
 
-.row {
-   display: flex;
-   gap: 15px;
+.field {
+   position: relative;
+   flex-grow: 1;
 
    & + & {
       margin-top: 15px;
    }
-}
-
-.field {
-   position: relative;
-   flex-grow: 1;
 
    .input {
       display: block;
@@ -48,4 +43,20 @@
 
 .error {
    color: red;
+}
+
+.row {
+   display: flex;
+   gap: 15px;
+
+   .field {
+      margin-top: 0 !important;
+   }
+
+   & + &,
+   & + .field,
+   .field + &,
+   .selectionRow {
+      margin-top: 15px;
+   }
 }

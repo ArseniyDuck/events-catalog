@@ -7,7 +7,7 @@ import { Cross, Search } from 'icons';
 import { RouteLinks } from 'app-routing';
 import { Link } from 'react-router-dom';
 import { imageUrl } from 'tools/functions';
-import EventCreation from 'components/event-creation/EventCreation';
+import EventForm from 'components/event-form/EventForm';
 
 
 type PropsType = {

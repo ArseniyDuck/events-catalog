@@ -37,3 +37,17 @@ type SmallCategory = {
    id: number
    name: string
 }
+
+type EventCreation = {
+   name: string
+   description: string
+   time: string
+   peopleRequired: string
+   price: string
+   place: string
+   categories: number[]
+}
+
+type EventEdit = EventCreation & {
+   peopleJoined: string
+}

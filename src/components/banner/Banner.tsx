@@ -1,5 +1,5 @@
 import React from 'react';
-import { imageUrl, phoneNumber } from 'tools/functions';
+import { imageUrl } from 'tools/functions';
 import s from './Banner.module.scss';
 
 

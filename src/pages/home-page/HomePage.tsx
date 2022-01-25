@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
-import s from './MainPage.module.scss';
+import s from './HomePage.module.scss';
 import Header from 'components/header/Header';
-import { useGetCategoriesQuery, useGetEventsQuery } from 'redux/eventsApi';
+import { useCreateEventMutation, useGetEventsQuery } from 'redux/eventsApi';
 import SubHeader from 'components/sub-header/SubHeader';
 import { componentList } from 'tools/functions';
 import EventCard, { CardsContainer, EventCardSkeleton } from 'components/card/Card';
 import { useModal } from 'hooks';
 import FiltersForm from 'components/filters-form/FiltersForm';
 import { DefaultFilters, SortBy } from 'tools/variables';
-import EventCreation from 'components/event-creation/EventCreation';
+import EventForm from 'components/event-form/EventForm';
 
 type PropsType = {};
 
-const MainPage: React.FC = () => {
+const HomePage: React.FC = () => {
    const [sortMode, setSortMode] = useState<string>(SortBy.NEWEST);
    const [filters, setFilters] = useState<CalalogEventFilters>(DefaultFilters);
 
-   const {data: catalogEvents=[], isLoading: isLoadingEvents} = useGetEventsQuery({sort: sortMode, filter: filters});
+   const {
+      data: catalogEvents=[],
+      isLoading: isLoadingEvents,
+   } = useGetEventsQuery({
+      sort: sortMode,
+      filter: filters,
+   });
+
+   const [createEvent] = useCreateEventMutation();
 
    const [isFilterOpened, setisFilterOpened, filterRef] = useModal<HTMLDivElement>()
    const [isCreationOpened, setIsCreationOpened, creationRef] = useModal<HTMLDivElement>()
@@ -42,10 +50,12 @@ const MainPage: React.FC = () => {
          filtersRef={filterRef}
          setFilters={setFilters}
       />
-      <EventCreation
+      <EventForm
+         mode='edit'
          isOpened={isCreationOpened}
          close={() => setIsCreationOpened(false)}
          innerRef={creationRef}
+         onSubmit={createEvent}
       />
       <CardsContainer>
          {isLoadingEvents
@@ -71,4 +81,4 @@ const MainPage: React.FC = () => {
    </>;
 }
 
-export default MainPage;
+export default HomePage;

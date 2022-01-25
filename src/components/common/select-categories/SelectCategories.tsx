@@ -61,7 +61,7 @@ const SelectCategories: React.FC<SelectProps> = ({
          />
       </div>
       {isError && (
-         <div className={s.error}>{error}</div>
+         <div className={s.fieldError}>{error}</div>
       )}
 
       {is === 'modal'

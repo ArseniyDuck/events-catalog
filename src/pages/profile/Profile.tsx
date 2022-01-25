@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { componentList, getHighlightedText, phoneNumber, timeToString } from 'tools/functions';
+import { componentList, phoneNumber } from 'tools/functions';
 import s from './Profile.module.scss';
-import { Container, Dropdown, TransitionSkeleton } from 'components/common';
-import { Cross, Dots, Spinner } from 'icons';
+import { Container, Dropdown } from 'components/common';
+import { Dots, Spinner } from 'icons';
 import { useAppDispatch, useAppSelector, useDebounce, useQueryParams, useModal } from 'hooks';
 import { logout } from 'redux/auth-reducer';
 import { RouteLinks } from 'app-routing';
-import { useGetCategoriesQuery, useGetUserEventsQuery } from 'redux/eventsApi';
+import { useCreateEventMutation, useGetUserEventsQuery } from 'redux/eventsApi';
 import { useNavigate } from 'react-router';
 import ProfileNotification from 'components/profile-notification/ProfileNotification'
 import ProfileSearch from 'components/profile-search/ProfileSearch';
 import Banner from 'components/banner/Banner';
 import EditProfile from 'components/edit-profile/EditProfile';
-import EventCreation from 'components/event-creation/EventCreation';
-import SuccessMark from 'icons/succuss-mark/SuccessMark';
+import EventForm from 'components/event-form/EventForm';
+import RowEvent, { RowEventSkeleton } from 'components/row-event/RowEvent';
 
 
 // todo: check and fix all animations
@@ -21,8 +21,17 @@ import SuccessMark from 'icons/succuss-mark/SuccessMark';
 type PropsType = {};
 
 const Profile: React.FC<PropsType> = (props) => {
-   const [isCreationOpened, setIsCreationOpened, creationRef] = useModal<HTMLDivElement>()
-   const [isEditOpened, setIsEditOpened, editRef] = useModal<HTMLDivElement>()
+   const [
+      isCreationOpened,
+      setIsCreationOpened,
+      creationRef
+   ] = useModal<HTMLDivElement>();
+
+   const [
+      isEditOpened,
+      setIsEditOpened,
+      editRef
+   ] = useModal<HTMLDivElement>();
 
    const navigate = useNavigate()
    
@@ -38,30 +47,19 @@ const Profile: React.FC<PropsType> = (props) => {
       isLoading: isLoadingEvents
    } = useGetUserEventsQuery(debouncedSearchTerm);
 
-   const {data: categories=[], isLoading: isLoadingCategories} = useGetCategoriesQuery();
+   const [
+      createEvent,
+      { isLoading: isLoadingCreation }
+   ] = useCreateEventMutation();
+
+   const isLoadingAuth = useAppSelector(state => state.auth.isFetching);
+
+   const isSpinner = isLoadingAuth || isLoadingCreation
 
    const handleLogout = () => {
       dispatch(logout())
       navigate(RouteLinks.SIGN_IN)
    }
-
-   const handleCretionOpen = () => {
-      setIsCreationOpened(true)
-   }
-
-   const handleCretionClose = () => {
-      setIsCreationOpened(false)
-   }
-
-   const handleEditOpen = () => {
-      setIsEditOpened(true)
-   }
-
-   const handleEditClose = () => {
-      setIsEditOpened(false)
-   }
-
-   const isLoading = useAppSelector(state => state.auth.isFetching)
 
    return (
       <Container className={s.container}>
@@ -69,14 +67,16 @@ const Profile: React.FC<PropsType> = (props) => {
          {user.fullname && (
             <EditProfile
                isOpened={isEditOpened}
-               close={handleEditClose}
+               close={() => setIsEditOpened(false)}
                innerRef={editRef}
             />
          )}
-         <EventCreation
+         <EventForm
+            mode='create'
             isOpened={isCreationOpened}
-            close={handleCretionClose}
+            close={() => setIsCreationOpened(false)}
             innerRef={creationRef}
+            onSubmit={createEvent}
          />
          <Banner
             photo={user.photo}
@@ -89,22 +89,20 @@ const Profile: React.FC<PropsType> = (props) => {
          )}
          <div className={s.options}>
             <ProfileSearch setSearch={setSearchEventTerm} />
-            <button onClick={handleCretionOpen} className={s.create}>
+            <button onClick={() => setIsCreationOpened(true)} className={s.create}>
                Create event
             </button>
             <ProfileDropdown>
                <ProfileAction
                   text='Edit profile'
-                  onClick={handleEditOpen}
+                  onClick={() => setIsEditOpened(true)}
                />
                <ProfileAction
                   text='Logout'
                   onClick={handleLogout}
                />
             </ProfileDropdown>
-            {isLoading && (
-               <Spinner size={20} />
-            )}
+            {isSpinner && <Spinner size={20} />}
          </div>
          <div className={s.content}>
             <TableHeading />
@@ -124,7 +122,6 @@ const Profile: React.FC<PropsType> = (props) => {
       </Container>
    );
 };
-
 
 
 
@@ -149,18 +146,6 @@ const ProfileDropdown: React.FC = (props) => {
 
 
 
-const TableHeading: React.FC = () => {
-   return (
-      <div className={s.tableHeading}>
-         <span className={s.tableTitle}>Title</span>
-         <span className={s.tableDate}>Date</span>
-         <span className={s.tableIsActive}>Is active</span> 
-      </div>
-   );
-}
-
-
-
 type ProfileActionProps = {
    text: string
    onClick: () => void
@@ -178,56 +163,12 @@ const ProfileAction: React.FC<ProfileActionProps> = (props) => {
 
 
 
-type RowEventProps = MyEvent & {
-   searchTerm: string
-}
-const RowEvent: React.FC<RowEventProps> = (props) => {
+const TableHeading: React.FC = () => {
    return (
-      <div className={`${s.eventRow} greyOnInteract`}>
-         <p className={s.eventName}>
-            {getHighlightedText(props.name, props.searchTerm, {
-               background: 'var(--main-color)',
-               color: '#fff'
-            })}
-         </p>
-         <time dateTime={props.time} className={s.eventTime}>{timeToString(props.time)}</time>
-         <span className={s.isActive}>
-            {props.is_active
-               ? 
-                  <span className={s.true}>
-                     <SuccessMark size={13} color='#fff' />
-                  </span>
-   
-               : (
-                  <span className={s.false}>
-                     <Cross color='#fff' size={10} stroke={5} />
-                  </span>
-               )
-            }
-         </span>
-      </div>
-   );
-}
-
-
-const RowEventSkeleton: React.FC = (props) => {
-   return (
-      <div className={s.eventRow}>
-         <div className={s.eventName}>
-            <TransitionSkeleton width={250} height={20} />   
-         </div>
-         <div className={s.eventTime}>
-            <TransitionSkeleton width={150} height={16} />
-         </div>
-         <div className={s.isActive}>
-            <TransitionSkeleton
-               width={20}
-               height={20}
-               styles={{
-                  borderRadius: '50%'
-               }}
-            />
-         </div>
+      <div className={s.tableHeading}>
+         <span className={s.tableTitle}>Title</span>
+         <span className={s.tableDate}>Date</span>
+         <span className={s.tableIsActive}>Is active</span> 
       </div>
    );
 }
